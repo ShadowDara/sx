@@ -1,7 +1,7 @@
 # Makefile for Shortcuter
 
 build:
-	g++ -O2 -march=native -flto src/*.cpp thirdparty/*.cpp -o main
+	g++ -O2 -march=native -flto src/*.cpp -o main
 
 run:
 	$(MAKE) build
