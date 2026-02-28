@@ -55,6 +55,19 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
+	// Print Info
+	if (std::string(argv[1]) == "--info" || std::string(argv[1]) == "-i")
+	{
+		return printinfo();
+	}
+
+	// Print Version
+	if (std::string(argv[1]) == "--version" || std::string(argv[1]) == "-v")
+	{
+		std::cout << Version << "\n";
+		return 0;
+	}
+
 	// Run Shortcut
 	return runShortcut(argc, argv, result);;
 }

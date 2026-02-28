@@ -30,6 +30,14 @@ int printhelp()
 }
 
 
+// Function to print Info
+int printinfo()
+{
+	std::cout << "SX by Shadowdara Version " << Version << " Built at " << BuildTime << "\n";
+	return 0;
+}
+
+
 // Function to load the configuration file and
 // return its content as a string
 std::string loadConfig()
@@ -52,7 +60,7 @@ std::string loadConfig()
 
 // Function to run the shortcut command
 int runShortcut(int argc, char* argv[],
-	std::unordered_map<std::string, std::string> result)
+	std::unordered_map<std::string, std::string>& result)
 {
 	// Check if shortcut exists
 	auto it = result.find(argv[1]);
@@ -64,6 +72,17 @@ int runShortcut(int argc, char* argv[],
 
 	// Base command from config
 	std::string command = it->second;
+
+	// Check if its a reserved Keyword
+	for (auto entry: ReservedCommands)
+	{
+		// std::cout << entry << " ! " << it->first << "\n";
+		if (entry == it->first)
+		{
+			std::cout << RED << "[ERROR] " << YELLOW << it->first << END << " is a reserved Keyword! It can not be used as Shortcut!\n";
+			return 1;
+		}
+	}
 
 	// Append additional arguments
 	for (int i = 2; i < argc; ++i)
@@ -83,7 +102,7 @@ int runShortcut(int argc, char* argv[],
 
 // Function to check if the Defaul Message with no arguments go
 // Overwritten
-bool checkNewStartMessage(std::unordered_map<std::string, std::string> result)
+bool checkNewStartMessage(std::unordered_map<std::string, std::string>& result)
 {
 	// Check for Standard print overwriting
 	auto it = result.find("--overwrite-start-message");
@@ -107,7 +126,7 @@ bool checkNewStartMessage(std::unordered_map<std::string, std::string> result)
 // while be first searched for the file path from the hash map and then
 // the File path will be loaded, and file content will be written to the
 // Terminal
-void printNewStartMessage(std::unordered_map<std::string, std::string> result)
+void printNewStartMessage(std::unordered_map<std::string, std::string>& result)
 {
 	auto it = result.find("--start-message-file");
 	if (it == result.end())

@@ -1,6 +1,6 @@
 # SX
 
-a simple shortcuter program
+a simple shortcuter program!
 
 ## Usage
 
@@ -12,9 +12,9 @@ and use the KeyValue shortcuts with
 sx hi
 ```
 
-and in the config file
+and in the config file is a KeyValue File. Entrys are seperated by `=`
 
-```conf
+```sh
 # Lines with # are comments
 hi=echo Hallo World
 ```
@@ -28,7 +28,12 @@ There is the Option to add a Start Message with
 # Icon
 # Set to true for this!
 --overwrite-start-message=false
-# Enter here the File name! ~ is equal to the Home Directory
-# although on Windows!
---start-message-file=empty
+
+# Enter here the File name! Path starts in the Home Directory
+--start-message-file=empty.txt
+
+# View my dotfiles for Examples!
 ```
+
+A Warning will appear when a entry which is already for settigs used,
+is trying to be used as a Command!
