@@ -9,4 +9,4 @@
 std::string getHomeDirectory();
 
 // Function to run a command in the system shell
-int runCommand(const std::string& command);
+int runCommand(const std::string& command, const std::string& terminal);

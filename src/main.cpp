@@ -1,8 +1,7 @@
 ﻿// Shortcuter.cpp: Definiert den Einstiegspunkt für die Anwendung.
 //
 
-// for Printf
-#include <stdio.h>
+#include <iostream>
 #include <string>
 
 // Include the Shortcuter Header File
@@ -25,9 +24,10 @@ int main(int argc, char *argv[])
 	// Check if Argumentsare here
 	if (argc < 2)
 	{
+		// When the New start Message is False
 		if (!c.NewStartMessage)
 		{
-			printf("Please run with at least one argument or --help or -h.\n");
+			std::cout << "Please run with at least one argument or --help or -h.\n";
 		}
 		else
 		{
@@ -48,7 +48,8 @@ int main(int argc, char *argv[])
 	if (std::string(argv[1]) == "--view" || std::string(argv[1]) == "-v")
 	{
 		// Iterieren und ausgeben
-		for (const auto& pair : result) {
+		for (const auto& pair : result)
+		{
 			std::cout << pair.first << " => " << pair.second << '\n';
 		}
 
@@ -62,12 +63,18 @@ int main(int argc, char *argv[])
 	}
 
 	// Print Version
-	if (std::string(argv[1]) == "--version" || std::string(argv[1]) == "-v")
+	if (std::string(argv[1]) == "--version" || std::string(argv[1]) == "-vi")
 	{
 		std::cout << Version << "\n";
 		return 0;
 	}
 
+	// // Change a Command
+	// if (std::string(argv[1]) == "--change-command")
+	// {
+	// 	return changeCommand(argc, argv);
+	// }
+
 	// Run Shortcut
-	return runShortcut(argc, argv, result);;
+	return runShortcut(argc, argv, result);
 }

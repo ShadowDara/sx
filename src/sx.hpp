@@ -2,10 +2,10 @@
 
 #pragma once
 
-#include <stdio.h>
 #include <string>
 #include <fstream>
 #include <unordered_map>
+#include <iostream>
 
 #include "config.hpp"
 #include "oscore.hpp"
@@ -38,3 +38,6 @@ bool checkNewStartMessage(std::unordered_map<std::string, std::string>& result);
 // the File path will be loaded, and file content will be written to the
 // Terminal
 void printNewStartMessage(std::unordered_map<std::string, std::string>& result);
+
+// // Function to change a Command
+// int changeCommand(int argc, char* argv[]);

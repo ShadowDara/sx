@@ -6,26 +6,29 @@
 // Function to print the help message
 int printhelp()
 {
-	printf(
-		"Usage: shortcuter [Command Shortcut] {Arguments ...}\n"
-		"\n"
-		"Example Configuration File:\n"
-		"\n"
-		"# Config File for shortcuter\n"
-		"# \n"
-		"# Lines which start with #, are comments!\n"
-		"# \n"
-		"# Add KeyValuePairs here not for command shortcuts\n"
-		"# The left is the shortcut and the right is the long command\n"
-		"# which will be executed!\n"
-		"#\n"
-		"# All Arguments after the the shortcut command will be added\n"
-		"# to the runned command!\n"
-		"#\n"
-		"hi=echo Hallo World\n"
-		"\n"
-		"--view, -v\tView all shortcuts\n"
-	);
+	std::cout
+		<< GREEN "Usage: shortcuter [Command Shortcut] {Arguments ...}\n" END
+		<< "\n"
+		<< YELLOW "Example Configuration File:\n" END
+		<< "\n"
+		<< "# Config File for shortcuter\n"
+		<< "# \n"
+		<< "# Lines which start with #, are comments!\n"
+		<< "# \n"
+		<< "# Add KeyValuePairs here not for command shortcuts\n"
+		<< "# The left is the shortcut and the right is the long command\n"
+		<< "# which will be executed!\n"
+		<< "#\n"
+		<< "# All Arguments after the the shortcut command will be added\n"
+		<< "# to the runned command!\n"
+		<< "#\n"
+		<< "hi=echo Hallo World\n"
+		<< "\n"
+		<< CYAN "[OPTIONS]" END "\n"
+		<< "--view, -vi\tView all shortcuts\n"
+		<< "--version, -v\tprint the Version\n"
+		<< "--info, -i\tget Info about the Program Data\n"
+	;
 	return 0;
 }
 
@@ -66,7 +69,7 @@ int runShortcut(int argc, char* argv[],
 	auto it = result.find(argv[1]);
 	if (it == result.end())
 	{
-		printf("Shortcut not found: %s\n", argv[1]);
+		std::cout << "Shortcut not found: " << argv[1] << "\n";
 		return 1;
 	}
 
@@ -79,7 +82,8 @@ int runShortcut(int argc, char* argv[],
 		// std::cout << entry << " ! " << it->first << "\n";
 		if (entry == it->first)
 		{
-			std::cout << RED << "[ERROR] " << YELLOW << it->first << END << " is a reserved Keyword! It can not be used as Shortcut!\n";
+			std::cout << RED << "[ERROR] " << YELLOW << it->first
+				<< END << " is a reserved Keyword! It can not be used as Shortcut!\n";
 			return 1;
 		}
 	}
@@ -92,7 +96,7 @@ int runShortcut(int argc, char* argv[],
 	}
 
 	// Execute
-	auto returncode = runCommand(command);
+	auto returncode = runCommand(command, result["--windows-default-shell"]);
 
 	//printf("Command returned with code %d\n", returncode);
 
@@ -131,7 +135,7 @@ void printNewStartMessage(std::unordered_map<std::string, std::string>& result)
 	auto it = result.find("--start-message-file");
 	if (it == result.end())
 	{
-		printf("Start Message File Entry not found!");
+		std::cout << "Start Message File Entry not found!\n";
 		return;
 	}
 
@@ -146,10 +150,39 @@ void printNewStartMessage(std::unordered_map<std::string, std::string>& result)
     }
 
     std::string line;
-    while (std::getline(file, line)) { // Zeilenweise lesen
+    while (std::getline(file, line))
+	{
+		// Zeilenweise lesen
         std::cout << line << '\n';      // In die Konsole ausgeben
     }
 
     file.close(); // optional, da Destruktor automatisch schließt
     return;
 }
+
+
+// // Function to change a Command
+// int changeCommand(int argc, char* argv[])
+// {
+// 	// 0 Name
+// 	// 1 call this
+// 	// 2 Mode
+// 	// 3 Entryname
+
+// 	if (argc < 4)
+// 	{
+// 		return 1;
+// 	}
+
+// 	std::string mode = argv[2];
+// 	std::string entryname = argv[3];
+
+// 	// Delete an Entry
+// 	if (mode == "delete") {}
+
+// 	// Append an Entry
+// 	if (mode == "append") {}
+
+// 	// Modify an Entry
+// 	if (mode == "modify") {}
+// }

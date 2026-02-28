@@ -1,12 +1,12 @@
 # Makefile for Shortcuter
 
 build:
-	g++ -O2 -march=native -flto src/*.cpp -o main
+	g++ -O3 -march=native -flto src/*.cpp -o sx
 
 run:
 	$(MAKE) build
-	./main
+	./sx
 
 install:
 	$(MAKE) build
-	mv main /usr/local/bin/sx
+	mv sx /usr/local/bin/sx
