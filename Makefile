@@ -9,4 +9,4 @@ run:
 
 install:
 	$(MAKE) build
-	mv main /usr/local/bin/sc
+	mv main /usr/local/bin/sx
