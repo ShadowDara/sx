@@ -12,7 +12,7 @@ endif()
 project ("Shortcuter")
 
 # Fügen Sie der ausführbaren Datei dieses Projekts eine Quelle hinzu.
-add_executable (Shortcuter "src/main.cpp" "src/oscore.cpp" "src/sc.cpp")
+add_executable (Shortcuter "src/main.cpp" "src/oscore.cpp" "src/sx.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET Shortcuter PROPERTY CXX_STANDARD 20)

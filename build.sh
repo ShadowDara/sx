@@ -1,0 +1,11 @@
+#!/bin/bash
+
+echo Debug Build
+zig c++ -g -std=c++20 -O0 src/main.cpp src/oscore.cpp src/sx.cpp -o sx.exe
+./sx -h
+./sx
+
+echo Release Build
+# For a Release Build with Zig, but this would make the
+# Compilation Time Longer!
+zig c++ -std=c++20 -O3 src/main.cpp src/oscore.cpp src/sx.cpp -o sx_release.exe

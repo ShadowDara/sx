@@ -1,7 +1,7 @@
 #define KVP_IMPLEMENTATION
 #include "../KVP_single_header.hpp"
 
-#include "sc.hpp"
+#include "sx.hpp"
 
 // Function to print the help message
 int printhelp()
@@ -56,7 +56,8 @@ int runShortcut(int argc, char* argv[],
 {
 	// Check if shortcut exists
 	auto it = result.find(argv[1]);
-	if (it == result.end()) {
+	if (it == result.end())
+	{
 		printf("Shortcut not found: %s\n", argv[1]);
 		return 1;
 	}
@@ -64,9 +65,9 @@ int runShortcut(int argc, char* argv[],
 	// Base command from config
 	std::string command = it->second;
 
-
 	// Append additional arguments
-	for (int i = 2; i < argc; ++i) {
+	for (int i = 2; i < argc; ++i)
+	{
 		command += " ";
 		command += argv[i];
 	}
@@ -77,4 +78,59 @@ int runShortcut(int argc, char* argv[],
 	//printf("Command returned with code %d\n", returncode);
 
 	return returncode;
+}
+
+
+// Function to check if the Defaul Message with no arguments go
+// Overwritten
+bool checkNewStartMessage(std::unordered_map<std::string, std::string> result)
+{
+	// Check for Standard print overwriting
+	auto it = result.find("--overwrite-start-message");
+	if (it == result.end())
+	{
+		return false;
+	}
+
+	// Set in the Config to true
+	std::string OverrwriteStartMessage = it->second;
+	if (OverrwriteStartMessage == "true")
+	{
+		return true;
+	}
+
+	return false;
+}
+
+
+// Function to print the new Start Message
+// while be first searched for the file path from the hash map and then
+// the File path will be loaded, and file content will be written to the
+// Terminal
+void printNewStartMessage(std::unordered_map<std::string, std::string> result)
+{
+	auto it = result.find("--start-message-file");
+	if (it == result.end())
+	{
+		printf("Start Message File Entry not found!");
+		return;
+	}
+
+	std::string NewStartMessageFile = it->second;
+
+	std::ifstream file(getHomeDirectory() + "/" + NewStartMessageFile); // Datei öffnen
+
+	if (!file) { // Prüfen, ob die Datei existiert
+        std::cerr << "Error while opening the File " << NewStartMessageFile
+			<< "! Does it exist?\n";
+        return;
+    }
+
+    std::string line;
+    while (std::getline(file, line)) { // Zeilenweise lesen
+        std::cout << line << '\n';      // In die Konsole ausgeben
+    }
+
+    file.close(); // optional, da Destruktor automatisch schließt
+    return;
 }
