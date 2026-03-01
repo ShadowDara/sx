@@ -38,6 +38,10 @@ All Settings:
 
 # Change the Default Terminal Shell which is used on Windows
 --windows-default-shell=cmd
+
+# Print the Version and the Buildtime after the Custom Start Message
+# true, or false - Default is false
+--add-info-to-start-message=true
 ```
 
 A Warning will appear when a entry which is already for settigs used,

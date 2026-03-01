@@ -3,6 +3,7 @@
 
 #include "sx.hpp"
 
+
 // Function to print the help message
 int printhelp()
 {
@@ -28,6 +29,7 @@ int printhelp()
 		<< "--view, -vi\tView all shortcuts\n"
 		<< "--version, -v\tprint the Version\n"
 		<< "--info, -i\tget Info about the Program Data\n"
+		<< "--command, -c\tstart a command\n"
 	;
 	return 0;
 }
@@ -157,6 +159,18 @@ void printNewStartMessage(std::unordered_map<std::string, std::string>& result)
     }
 
     file.close(); // optional, da Destruktor automatisch schließt
+
+	auto it2 = result.find("--add-info-to-start-message");
+	if (it2 == result.end())
+	{
+		return;
+	}
+
+	if (it2->second == "true")
+	{
+		std::cout << "SX Version " Version " - BuildTime " BuildTime "\n";
+	}
+
     return;
 }
 

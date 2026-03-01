@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 	if (std::string(argv[1]) == "--view" || std::string(argv[1]) == "-v")
 	{
 		// Iterieren und ausgeben
-		for (const auto& pair : result)
+		for (const auto &pair : result)
 		{
 			std::cout << pair.first << " => " << pair.second << '\n';
 		}
@@ -65,8 +65,25 @@ int main(int argc, char *argv[])
 	// Print Version
 	if (std::string(argv[1]) == "--version" || std::string(argv[1]) == "-vi")
 	{
-		std::cout << Version << "\n";
+		std::cout << Version "\n";
 		return 0;
+	}
+
+	// Run a Command to overwrite the other
+	if (std::string(argv[1]) == "--command" || std::string(argv[1]) == "-c")
+	{
+		// Remove the --command from the Array
+		if (argc > 1)
+		{
+			for (int i = 1; i < argc - 1; ++i)
+			{
+				argv[i] = argv[i + 1];
+			}
+			argv[argc - 1] = nullptr;
+			--argc;
+		}
+
+		return runShortcut(argc, argv, result);
 	}
 
 	// // Change a Command

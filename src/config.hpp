@@ -12,12 +12,13 @@ struct Config {
 
 // Reserved Commads
 // Fixed Size because its known at compile Time
-inline constexpr std::string_view ReservedCommands[3] = {
+inline constexpr std::string_view ReservedCommands[4] = {
     "--overwrite-start-message",
     "--start-message-file",
-    "--windows-default-shell"
+    "--windows-default-shell",
+    "--add-info-to-start-message"
 };
 
 // Version and ca Buildtime
-inline constexpr std::string_view Version = "0.2.1";
-inline constexpr std::string_view BuildTime = "March 2026";
+#define Version "0.2.1"
+#define BuildTime "March 2026"

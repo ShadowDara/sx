@@ -1,5 +1,6 @@
 #include "oscore.hpp"
 
+
 // Function to get the user's home directory in a cross-platform way
 std::string getHomeDirectory()
 {
