@@ -1,7 +1,7 @@
 # Makefile for Shortcuter
 
 build:
-	g++ -O3 -march=native -flto src/*.cpp -o sx
+	g++ -O3 -march=native -flto tools/sx_main.cpp src/*.cpp -o sx
 
 run:
 	$(MAKE) build

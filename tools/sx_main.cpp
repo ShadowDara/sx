@@ -5,10 +5,11 @@
 #include <string>
 
 // Include the Shortcuter Header File
-#include "sx.hpp"
-#include "config.hpp"
+#include "../src/sx.hpp"
+#include "../src/config.hpp"
 
 
+// Main function for Shortcuter
 int main(int argc, char *argv[])
 {
 	// Create a new Config

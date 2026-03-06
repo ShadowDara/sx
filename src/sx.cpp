@@ -98,7 +98,11 @@ int runShortcut(int argc, char* argv[],
 	}
 
 	// Execute
-	auto returncode = runCommand(command, result["--windows-default-shell"]);
+	auto returncode = runCommand(
+		command,
+		result["--windows-default-shell"],
+		result["--linux-default-shell"]
+	);
 
 	//printf("Command returned with code %d\n", returncode);
 

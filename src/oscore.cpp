@@ -20,7 +20,11 @@ std::string getHomeDirectory()
 
 
 // Function to run a command in the system shell
-int runCommand(const std::string& command, const std::string& windowsterminal)
+int runCommand(
+    const std::string& command,
+    const std::string& windowsterminal,
+    const std::string& linuxterminal
+)
 {
     std::string fullCommand;
 
@@ -50,14 +54,14 @@ int runCommand(const std::string& command, const std::string& windowsterminal)
 
 #else
 
-    // if (terminal.empty())
-    // {
-    //     fullCommand = command;
-    // }
-    // else
-    // {
-    //     fullCommand = terminal + " -e \"" + command + "\"";
-    // }
+     if (terminal.empty())
+     {
+         fullCommand = command;
+     }
+     else
+     {
+         fullCommand = linuxterminal + " -e \"" + command + "\"";
+     }
 
     fullCommand = command
 
