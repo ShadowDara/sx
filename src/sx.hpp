@@ -7,11 +7,11 @@
 #include <unordered_map>
 #include <iostream>
 
-#include "config.hpp"
-#include "oscore.hpp"
+#include "sx_config.hpp"
+#include "sx_oscore.hpp"
 
-#include "../ansicolors.hpp"
-#include "../KVP_single_header.hpp"
+#include "../sx_lib/ansicolors.hpp"
+#include "../sx_lib/KVP_single_header.hpp"
 
 
 // Function to print the help message

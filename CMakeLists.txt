@@ -1,4 +1,4 @@
-﻿# CMakeList.txt: CMake-Projekt für "SX". Schließen Sie die Quelle ein, und definieren Sie
+﻿# CMakeList.txt: CMake-Projekt für "sx". Schließen Sie die Quelle ein, und definieren Sie
 # projektspezifische Logik hier.
 #
 cmake_minimum_required (VERSION 3.10)
@@ -10,22 +10,22 @@ if (POLICY CMP0141)
 endif()
 
 # Shortcuter Executable
-project ("SX")
+project ("sx")
 
 # Fügen Sie der ausführbaren Datei dieses Projekts eine Quelle hinzu.
-add_executable (SX "tools/sx_main.cpp" "src/oscore.cpp" "src/sx.cpp")
+add_executable (sx "tools/sx_main.cpp" "src/sx_oscore.cpp" "src/sx.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET SX PROPERTY CXX_STANDARD 20)
+  set_property(TARGET sx PROPERTY CXX_STANDARD 20)
 endif()
 
 # TODO: Fügen Sie bei Bedarf Tests hinzu, und installieren Sie Ziele.
 
-# 2nd Executable
-project("Multi")
+# MultiTool Executable
+project("sx-multi")
 
-add_executable(Multi "tools/multi_main.cpp")
+add_executable(sx-multi "tools/sx-multi_main.cpp" "src/sx-multi.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET Multi PROPERTY CXX_STANDARD 20)
+  set_property(TARGET sx-multi PROPERTY CXX_STANDARD 20)
 endif()

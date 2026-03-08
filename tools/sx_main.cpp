@@ -1,32 +1,37 @@
 ﻿// Shortcuter.cpp: Definiert den Einstiegspunkt für die Anwendung.
 //
 
+//#define NOMINMAX
+//#include <windows.h>
+
 #include <iostream>
 #include <string>
 
 // Include the Shortcuter Header File
 #include "../src/sx.hpp"
-#include "../src/config.hpp"
+#include "../src/sx_config.hpp"
 
 
 // Main function for Shortcuter
 int main(int argc, char *argv[])
 {
+	//SetConssoleOutputCP(CP_UTF8);
+
 	// Create a new Config
-	Config c;
+	Config config;
 
 	// Load the Shortcuts
 	std::string content = loadConfig();
 	// Parse KVP File
 	auto result = KeyValueParser::parse_kvp2(content);
 
-	c.NewStartMessage = checkNewStartMessage(result);
+	config.NewStartMessage = checkNewStartMessage(result);
 
 	// Check if Argumentsare here
 	if (argc < 2)
 	{
 		// When the New start Message is False
-		if (!c.NewStartMessage)
+		if (!config.NewStartMessage)
 		{
 			std::cout << "Please run with at least one argument or --help or -h.\n";
 		}
