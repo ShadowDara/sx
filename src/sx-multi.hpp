@@ -8,4 +8,4 @@
 int printhelp();
 
 // Function to run the number guessing game
-void numberguess();
+void numberguess(int min, int max);

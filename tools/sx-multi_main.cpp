@@ -1,6 +1,7 @@
 // Main file for the Multi Tool
 
 #include <iostream>
+#include <charconv>
 
 #include "../src/sx-multi_config.hpp"
 #include "../src/sx-multi.hpp"
@@ -33,7 +34,20 @@ int main(int argc, char* argv[])
 	if (std::string(argv[1]) == "--numberguess" || std::string(argv[1]) == "-n")
 	{
 		//std::cout << numberguessConfig.getSetting("lol", config);
-		numberguess();
+		
+		std::string minS = numberguessConfig.getSetting("min", config);
+		std::string maxS = numberguessConfig.getSetting("min", config);
+		
+		int min;
+		int max;
+		
+		auto result = std::from_chars(minS.data(), minS.data() + minS.size(), min);
+		auto result2 = std::from_chars(maxS.data(), maxS.data() + maxS.size(), max);
+		
+		if (result.ec == std::errc() && result2.ec == std::errc()) {
+			numberguess(min, max);
+		}
+		numberguess(1, 1000);
 		return 0;
 	}
 }

@@ -16,18 +16,17 @@ int printhelp()
 
 
 // Function to run the number guessing game
-void numberguess()
+void numberguess(int min, int max)
 {
 	// Gen random Number
 	std::random_device rd;
 	std::mt19937 gen(rd()); // Zufallsgenerator
 
-	std::uniform_int_distribution<> dist(1, 1000); // Zahlen von 1 bis 1000
+	std::uniform_int_distribution<> dist(min, max); // Zahlen von 1 bis 1000
 
 	int zufall = dist(gen);
 
-	std::cout << "Guess the Number:\n";
-	//std::cout << "Hint: it is " << zufall << "\n";
+	std::cout << "Guess the Number between " << min << " and " << max << " \n";
 
 	while (true)
 	{

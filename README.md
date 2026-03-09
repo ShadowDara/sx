@@ -49,3 +49,21 @@ All Settings:
 
 A Warning will appear when a entry which is already for settigs used,
 is trying to be used as a Command!
+
+## Multi
+
+SX although has a multi Tools with a lot of options which can be called via SX,
+but must be configured separately in the `sx.conf` file.
+
+### NumberGuess Game
+
+A simple Number Guessing Game which can be called with `multi --numberguess`
+or `multi -n`
+
+**Settings**
+
+```sh
+# Min and Max Number for the Game, Default is 1 and 1000
+--numberguess-min=1
+--numberguess-max=1000
+```
