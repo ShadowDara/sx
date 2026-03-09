@@ -1,5 +1,9 @@
 #pragma once
 
+//#define NOMINMAX
+//#define WIN32_LEAN_AND_MEAN
+//#include <windows.h>
+
 #include <cstdlib>
 #include <string>
 
@@ -14,3 +18,6 @@ int runCommand(
 	const std::string& terminal,
 	const std::string& linuxterminal
 );
+
+// Function to enable UTF-8 support in the console
+void enableUTF8Support();

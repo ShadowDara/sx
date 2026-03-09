@@ -69,3 +69,13 @@ int runCommand(
 
     return std::system(fullCommand.c_str());
 }
+
+
+// Function to enable UTF-8 support in the console
+void enableUTF8Support()
+{
+#ifdef _WIN32
+    // Enable UTF-8 support in the Windows console
+	//SetConsoleOutputCP(CP_UTF8);
+#endif
+}

@@ -1,8 +1,7 @@
 ﻿// Shortcuter.cpp: Definiert den Einstiegspunkt für die Anwendung.
 //
 
-//#define NOMINMAX
-//#include <windows.h>
+#include "../src/sx_oscore.hpp"
 
 #include <iostream>
 #include <string>
@@ -15,7 +14,8 @@
 // Main function for Shortcuter
 int main(int argc, char *argv[])
 {
-	//SetConssoleOutputCP(CP_UTF8);
+	// Enable UTF8 on Windows
+	enableUTF8Support();
 
 	// Create a new Config
 	Config config;

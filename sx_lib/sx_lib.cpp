@@ -4,7 +4,8 @@
 #include "sx_lib.hpp"
 
 
-void SXLibConfig::loadConfig()
+// Load the Config File and return a Map with the Settings
+std::unordered_map<std::string, std::string> loadConfig()
 {
 	// Get Home Directory
 	auto homeDir = getHomeDirectory();
@@ -13,7 +14,7 @@ void SXLibConfig::loadConfig()
 	std::ifstream file{ homeDir + "/sx.conf" };
 	if (!file) {
 		perror("Could not open Config File\n");
-		return "";
+		return {};
 	}
 
 	std::string content(
@@ -22,11 +23,13 @@ void SXLibConfig::loadConfig()
 
 	auto result = KeyValueParser::parse_kvp2(content);
 
-	settings = std::move(result);
+	return result;
 }
 
 
-std::string SXLibConfig::getSetting(const std::string& key) const;
+// Load the Config and return the value for the given key
+std::string SXLibConfig::getSetting(const std::string& key,
+	std::unordered_map<std::string, std::string> settings)
 {
 	auto it = settings.find("--" + programName + "-" + key);
 	if (it != settings.end())

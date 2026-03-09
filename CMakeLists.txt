@@ -12,6 +12,8 @@ endif()
 # Shortcuter Executable
 project ("sx")
 
+add_compile_options(/utf-8)
+
 # Fügen Sie der ausführbaren Datei dieses Projekts eine Quelle hinzu.
 add_executable (sx "tools/sx_main.cpp" "src/sx_oscore.cpp" "src/sx.cpp")
 
@@ -24,7 +26,11 @@ endif()
 # MultiTool Executable
 project("sx-multi")
 
-add_executable(sx-multi "tools/sx-multi_main.cpp" "src/sx-multi.cpp")
+add_compile_options(/utf-8)
+
+add_executable(sx-multi "tools/sx-multi_main.cpp" "src/sx-multi.cpp"
+	"sx_lib/sx_lib.cpp"
+	"src/sx_oscore.cpp")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET sx-multi PROPERTY CXX_STANDARD 20)
