@@ -14,7 +14,7 @@ sx hi
 
 and in the config file is a KeyValue File. Entrys are seperated by `=`
 
-```sh
+```ini
 # Lines with # are comments
 hi=echo Hallo World
 ```
@@ -25,7 +25,7 @@ hi=echo Hallo World
 
 All SX Settings:
 
-```sh
+```ini
 # Option to change the Default Start Message to for example and
 # Icon
 # Set to true for this!
@@ -66,4 +66,33 @@ or `multi -n`
 # Min and Max Number for the Game, Default is 1 and 1000
 --numberguess-min=1
 --numberguess-max=1000
+```
+
+## UI
+
+SX has little UI Wrapper with WinForms on Windows which can be used to call
+shortcuts with a simple click on the Button
+
+Commands which will be called on UI Button Click `sx --windows-sx-ui-button1`
+
+So define these 16 Commands in your `sx.conf` file to use the UI
+and set the Command you want to call on Button Click
+
+```ini
+--windows-sx-ui-button1=hi
+--windows-sx-ui-button2=hi
+--windows-sx-ui-button3=hi
+--windows-sx-ui-button4=hi
+--windows-sx-ui-button5=hi
+--windows-sx-ui-button6=hi
+--windows-sx-ui-button7=hi
+--windows-sx-ui-button8=hi
+--windows-sx-ui-button9=hi
+--windows-sx-ui-button10=hi
+--windows-sx-ui-button11=hi
+--windows-sx-ui-button12=hi
+--windows-sx-ui-button13=hi
+--windows-sx-ui-button14=hi
+--windows-sx-ui-button15=hi
+--windows-sx-ui-button16=hi
 ```
