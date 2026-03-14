@@ -150,52 +150,122 @@ namespace SX_UI
 
         private void button7_Click(object sender, EventArgs e)
         {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "sx",
+                Arguments = "--windows-sx-ui-button7",
+                UseShellExecute = true
+            };
 
+            Process.Start(psi);
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "sx",
+                Arguments = "--windows-sx-ui-button8",
+                UseShellExecute = true
+            };
 
+            Process.Start(psi);
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "sx",
+                Arguments = "--windows-sx-ui-button9",
+                UseShellExecute = true
+            };
 
+            Process.Start(psi);
         }
 
         private void button10_Click(object sender, EventArgs e)
         {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "sx",
+                Arguments = "--windows-sx-ui-button10",
+                UseShellExecute = true
+            };
 
+            Process.Start(psi);
         }
 
         private void button11_Click(object sender, EventArgs e)
         {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "sx",
+                Arguments = "--windows-sx-ui-button11",
+                UseShellExecute = true
+            };
 
+            Process.Start(psi);
         }
 
         private void button12_Click(object sender, EventArgs e)
         {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "sx",
+                Arguments = "--windows-sx-ui-button12",
+                UseShellExecute = true
+            };
 
+            Process.Start(psi);
         }
 
         private void button13_Click(object sender, EventArgs e)
         {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "sx",
+                Arguments = "--windows-sx-ui-button13",
+                UseShellExecute = true
+            };
 
+            Process.Start(psi);
         }
 
         private void button14_Click(object sender, EventArgs e)
         {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "sx",
+                Arguments = "--windows-sx-ui-button14",
+                UseShellExecute = true
+            };
 
+            Process.Start(psi);
         }
 
         private void button15_Click(object sender, EventArgs e)
         {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "sx",
+                Arguments = "--windows-sx-ui-button15",
+                UseShellExecute = true
+            };
 
+            Process.Start(psi);
         }
 
         private void button16_Click(object sender, EventArgs e)
         {
-           
+            var psi = new ProcessStartInfo
+            {
+                FileName = "sx",
+                Arguments = "--windows-sx-ui-button16",
+                UseShellExecute = true
+            };
+
+            Process.Start(psi);
         }
     }
 }
