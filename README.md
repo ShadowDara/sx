@@ -19,11 +19,11 @@ and in the config file is a KeyValue File. Entrys are seperated by `=`
 hi=echo Hallo World
 ```
 
-## Config
+## SX Config
 
 **There is the Option to add a Start Message to SX to customize it more!**
 
-All Settings:
+All SX Settings:
 
 ```sh
 # Option to change the Default Start Message to for example and

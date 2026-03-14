@@ -2,3 +2,5 @@ out/
 .vs/
 *.exe
 *.pdb
+SX-UI/obj
+SX-UI/bin

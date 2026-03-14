@@ -35,3 +35,16 @@ add_executable(sx-multi "tools/sx-multi_main.cpp" "src/sx-multi.cpp"
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET sx-multi PROPERTY CXX_STANDARD 20)
 endif()
+
+# Test Project
+project("test")
+
+add_compile_options(/utf-8)
+
+add_executable(test "tools/test.cpp" "src/sx-multi.cpp"
+	"sx_lib/sx_lib.cpp"
+	"src/sx_oscore.cpp")
+
+if (CMAKE_VERSION VERSION_GREATER 3.12)
+  set_property(TARGET test PROPERTY CXX_STANDARD 20)
+endif()
