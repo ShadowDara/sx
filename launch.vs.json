@@ -1,0 +1,60 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "default",
+      "name": "sx.exe help",
+      "project": "CMakeLists.txt",
+      "projectTarget": "sx.exe",
+      "args": [
+        "-h"
+      ]
+    },
+    {
+      "type": "default",
+      "name": "sx.exe info",
+      "project": "CMakeLists.txt",
+      "projectTarget": "sx.exe",
+      "args": [
+        "-i"
+      ]
+    },
+    {
+      "type": "default",
+      "name": "sx.exe version",
+      "project": "CMakeLists.txt",
+      "projectTarget": "sx.exe",
+      "args": [
+        "-v"
+      ]
+    },
+    {
+      "type": "default",
+      "name": "sx-multi.exe help",
+      "project": "CMakeLists.txt",
+      "projectTarget": "sx-multi.exe",
+      "args": [
+        "-h"
+      ]
+    },
+    {
+      "type": "default",
+      "name": "NumberGame",
+      "project": "CMakeLists.txt",
+      "projectTarget": "sx-multi.exe",
+      "args": [
+        "--numberguess"
+      ]
+    },
+    {
+      "type": "default",
+      "name": "Loadtime",
+      "project": "CMakeLists.txt",
+      "projectTarget": "sx-multi.exe",
+      "args": [
+        "--loadtime"
+      ]
+    }
+  ]
+}

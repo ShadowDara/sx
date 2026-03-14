@@ -30,6 +30,8 @@ int printhelp()
 		<< "--version, -v\tprint the Version\n"
 		<< "--info, -i\tget Info about the Program Data\n"
 		<< "--command, -c\tstart a command\n"
+		<< "\n"
+		<< GREEN "SX Version " << Version << " Built at " << BuildTime << "\n" END
 	;
 	return 0;
 }

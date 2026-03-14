@@ -128,3 +128,12 @@ and set the Command you want to call on Button Click
 --windows-sx-ui-button15-name=echo Hallo World
 --windows-sx-ui-button16-name=echo Hallo World
 ```
+
+
+## Info
+
+SX uses [KVP](https://github.com/ShadowDara/KeyValueParser)
+for the Config and Command System, which is a simple
+Key Value Pair System Libary written by me. Feel free to optimize is,
+if you want too.
+	

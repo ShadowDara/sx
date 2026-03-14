@@ -44,9 +44,11 @@ int main(int argc, char* argv[])
 		auto result = std::from_chars(minS.data(), minS.data() + minS.size(), min);
 		auto result2 = std::from_chars(maxS.data(), maxS.data() + maxS.size(), max);
 		
-		if (result.ec == std::errc() && result2.ec == std::errc()) {
+		if (result.ec == std::errc() && result2.ec == std::errc())
+		{
 			numberguess(min, max);
 		}
+
 		numberguess(1, 1000);
 		return 0;
 	}

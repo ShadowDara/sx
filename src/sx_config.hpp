@@ -21,5 +21,5 @@ inline constexpr std::string_view ReservedCommands[5] = {
 };
 
 // Version and ca Buildtime
-#define Version "0.2.1"
+#define Version "0.2.2"
 #define BuildTime "March 2026"

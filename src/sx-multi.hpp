@@ -5,6 +5,7 @@
 #include <chrono>
 
 #include "../sx_lib/sx_lib.hpp"
+#include "sx-multi_config.hpp"
 
 
 // Function to print the help message for the Multi Tool
