@@ -1,0 +1,7 @@
+LICENSE for SX-UI
+
+Project used Material by crusenho from
+https://crusenho.itch.io/icons-essential-pack-free-icons used
+under CC BY 4.0. Changes were made.
+
+https://creativecommons.org/licenses/by/4.0/

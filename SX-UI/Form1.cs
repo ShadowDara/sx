@@ -65,22 +65,22 @@ namespace SX_UI
             // Array der Buttons und ihrer Argumente
             var buttons = new (Button button, string arg)[]
             {
-        (button1, "--windows-sx-ui-button1-name"),
-        (button2, "--windows-sx-ui-button2-name"),
-        (button3, "--windows-sx-ui-button3-name"),
-        (button4, "--windows-sx-ui-button4-name"),
-        (button5, "--windows-sx-ui-button5-name"),
-        (button6, "--windows-sx-ui-button6-name"),
-        (button7, "--windows-sx-ui-button7-name"),
-        (button8, "--windows-sx-ui-button8-name"),
-        (button9, "--windows-sx-ui-button9-name"),
-        (button10, "--windows-sx-ui-button10-name"),
-        (button11, "--windows-sx-ui-button11-name"),
-        (button12, "--windows-sx-ui-button12-name"),
-        (button13, "--windows-sx-ui-button13-name"),
-        (button14, "--windows-sx-ui-button14-name"),
-        (button15, "--windows-sx-ui-button15-name"),
-        (button16, "--windows-sx-ui-button16-name"),
+                (button1, "--windows-sx-ui-button1-name"),
+                (button2, "--windows-sx-ui-button2-name"),
+                (button3, "--windows-sx-ui-button3-name"),
+                (button4, "--windows-sx-ui-button4-name"),
+                (button5, "--windows-sx-ui-button5-name"),
+                (button6, "--windows-sx-ui-button6-name"),
+                (button7, "--windows-sx-ui-button7-name"),
+                (button8, "--windows-sx-ui-button8-name"),
+                (button9, "--windows-sx-ui-button9-name"),
+                (button10, "--windows-sx-ui-button10-name"),
+                (button11, "--windows-sx-ui-button11-name"),
+                (button12, "--windows-sx-ui-button12-name"),
+                (button13, "--windows-sx-ui-button13-name"),
+                (button14, "--windows-sx-ui-button14-name"),
+                (button15, "--windows-sx-ui-button15-name"),
+                (button16, "--windows-sx-ui-button16-name"),
             };
 
             // Buttons nacheinander oder parallel laden
