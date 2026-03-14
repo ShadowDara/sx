@@ -62,7 +62,7 @@ or `multi -n`
 
 **Settings**
 
-```sh
+```ini
 # Min and Max Number for the Game, Default is 1 and 1000
 --numberguess-min=1
 --numberguess-max=1000
@@ -79,6 +79,7 @@ So define these 16 Commands in your `sx.conf` file to use the UI
 and set the Command you want to call on Button Click
 
 ```ini
+# Button Callbacks for the Windows UI
 --windows-sx-ui-button1=hi
 --windows-sx-ui-button2=hi
 --windows-sx-ui-button3=hi
@@ -95,4 +96,24 @@ and set the Command you want to call on Button Click
 --windows-sx-ui-button14=hi
 --windows-sx-ui-button15=hi
 --windows-sx-ui-button16=hi
+
+# Buttom names for the Windows UI
+# Use echo so that the Name will be retuned as Output and not
+# as Command to call when the Button is Clicked
+--windows-sx-ui-button1-name=echo Hallo World
+--windows-sx-ui-button2-name=echo Hallo World
+--windows-sx-ui-button3-name=echo Hallo World
+--windows-sx-ui-button4-name=echo Hallo World
+--windows-sx-ui-button5-name=echo Hallo World
+--windows-sx-ui-button6-name=echo Hallo World
+--windows-sx-ui-button7-name=echo Hallo World
+--windows-sx-ui-button8-name=echo Hallo World
+--windows-sx-ui-button9-name=echo Hallo World
+--windows-sx-ui-button10-name=echo Hallo World
+--windows-sx-ui-button11-name=echo Hallo World
+--windows-sx-ui-button12-name=echo Hallo World
+--windows-sx-ui-button13-name=echo Hallo World
+--windows-sx-ui-button14-name=echo Hallo World
+--windows-sx-ui-button15-name=echo Hallo World
+--windows-sx-ui-button16-name=echo Hallo World
 ```

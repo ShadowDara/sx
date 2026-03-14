@@ -16,64 +16,80 @@ namespace SX_UI
 {
     public partial class Form1 : Form
     {
+        // Function to run a command and return its output
+        private static async Task<string> RunCommandAsync(string command, string[] args)
+        {
+            string arguments = string.Join(" ", Array.ConvertAll(args, a => $"\"{a}\""));
+
+            ProcessStartInfo psi = new ProcessStartInfo
+            {
+                FileName = command,
+                Arguments = arguments,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using (Process process = new Process { StartInfo = psi })
+            {
+                process.Start();
+
+                // Async-Ausgabe lesen
+                Task<string> outputTask = process.StandardOutput.ReadToEndAsync();
+                Task<string> errorTask = process.StandardError.ReadToEndAsync();
+
+                // Prozess beenden abwarten
+                await Task.Run(() => process.WaitForExit());  // <-- hier kein WaitForExitAsync nötig
+
+                string output = await outputTask;
+                string error = await errorTask;
+
+                if (process.ExitCode == 1)
+                    return "";
+
+                if (!string.IsNullOrEmpty(error))
+                    output += "\nError:\n" + error;
+
+                return output;
+            }
+        }
+
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private async void Form1_Load(object sender, EventArgs e)
         {
-            // Load the Button Names
+            // Array der Buttons und ihrer Argumente
+            var buttons = new (Button button, string arg)[]
+            {
+        (button1, "--windows-sx-ui-button1-name"),
+        (button2, "--windows-sx-ui-button2-name"),
+        (button3, "--windows-sx-ui-button3-name"),
+        (button4, "--windows-sx-ui-button4-name"),
+        (button5, "--windows-sx-ui-button5-name"),
+        (button6, "--windows-sx-ui-button6-name"),
+        (button7, "--windows-sx-ui-button7-name"),
+        (button8, "--windows-sx-ui-button8-name"),
+        (button9, "--windows-sx-ui-button9-name"),
+        (button10, "--windows-sx-ui-button10-name"),
+        (button11, "--windows-sx-ui-button11-name"),
+        (button12, "--windows-sx-ui-button12-name"),
+        (button13, "--windows-sx-ui-button13-name"),
+        (button14, "--windows-sx-ui-button14-name"),
+        (button15, "--windows-sx-ui-button15-name"),
+        (button16, "--windows-sx-ui-button16-name"),
+            };
 
-            string name = "";
-
-            name = ConfigurationManager.AppSettings["button1-name"];
-            button1.Text = string.IsNullOrWhiteSpace(name) ? button1.Text : name;
-
-            name = ConfigurationManager.AppSettings["button2-name"];
-            button2.Text = string.IsNullOrWhiteSpace(name) ? button2.Text : name;
-
-            name = ConfigurationManager.AppSettings["button3-name"];
-            button3.Text = string.IsNullOrWhiteSpace(name) ? button3.Text : name;
-
-            name = ConfigurationManager.AppSettings["button4-name"];
-            button4.Text = string.IsNullOrWhiteSpace(name) ? button4.Text : name;
-
-            name = ConfigurationManager.AppSettings["button5-name"];
-            button5.Text = string.IsNullOrWhiteSpace(name) ? button5.Text : name;
-
-            name = ConfigurationManager.AppSettings["button6-name"];
-            button6.Text = string.IsNullOrWhiteSpace(name) ? button6.Text : name;
-
-            name = ConfigurationManager.AppSettings["button7-name"];
-            button7.Text = string.IsNullOrWhiteSpace(name) ? button7.Text : name;
-
-            name = ConfigurationManager.AppSettings["button8-name"];
-            button8.Text = string.IsNullOrWhiteSpace(name) ? button8.Text : name;
-
-            name = ConfigurationManager.AppSettings["button9-name"];
-            button9.Text = string.IsNullOrWhiteSpace(name) ? button9.Text : name;
-
-            name = ConfigurationManager.AppSettings["button10-name"];
-            button10.Text = string.IsNullOrWhiteSpace(name) ? button10.Text : name;
-
-            name = ConfigurationManager.AppSettings["button11-name"];
-            button11.Text = string.IsNullOrWhiteSpace(name) ? button11.Text : name;
-
-            name = ConfigurationManager.AppSettings["button12-name"];
-            button12.Text = string.IsNullOrWhiteSpace(name) ? button12.Text : name;
-
-            name = ConfigurationManager.AppSettings["button13-name"];
-            button13.Text = string.IsNullOrWhiteSpace(name) ? button13.Text : name;
-
-            name = ConfigurationManager.AppSettings["button14-name"];
-            button14.Text = string.IsNullOrWhiteSpace(name) ? button14.Text : name;
-
-            name = ConfigurationManager.AppSettings["button15-name"];
-            button15.Text = string.IsNullOrWhiteSpace(name) ? button15.Text : name;
-
-            name = ConfigurationManager.AppSettings["button16-name"];
-            button16.Text = string.IsNullOrWhiteSpace(name) ? button16.Text : name;
+            // Buttons nacheinander oder parallel laden
+            foreach (var (button, arg) in buttons)
+            {
+                string name = await RunCommandAsync("sx", new string[] { arg });
+                if (!string.IsNullOrWhiteSpace(name))
+                    button.Text = name;
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
