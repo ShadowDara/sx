@@ -50,4 +50,11 @@ int main(int argc, char* argv[])
 		numberguess(1, 1000);
 		return 0;
 	}
+
+	// Check for the loadtime function
+	if (std::string(argv[1]) == "--loadtime" || std::string(argv[1]) == "-l")
+	{
+		loadtime();
+		return 0;
+	}
 }

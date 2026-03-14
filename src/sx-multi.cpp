@@ -8,6 +8,7 @@ int printhelp()
 		<< "This is the Multi Tool. It is a collection of small tools and games.\n"
 		<< "Currently it includes:\n"
 		<< " - --numberguess, -n: A simple number guessing game.\n"
+		<< " - --loadtime, -l: Check the time it took to load the config file.\n"
 		<< "Usage:\n"
 		<< " - Run the program and follow the instructions for the selected tool or game.\n"
 	;
@@ -47,4 +48,21 @@ void numberguess(int min, int max)
 			std::cout << "Too high! Try again.\n";
 		}
 	}
+}
+
+
+// Function to check the Time it took to load the config file
+void loadtime()
+{
+	auto start = std::chrono::high_resolution_clock::now();
+
+	auto config = loadConfig();
+
+	auto end = std::chrono::high_resolution_clock::now();
+
+	std::chrono::duration<double> elapsed = end - start;
+
+	std::cout << "Time to load config: " << elapsed.count() << " seconds\n";
+
+	return;
 }
