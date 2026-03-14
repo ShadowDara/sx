@@ -15,4 +15,4 @@ int printhelp();
 void numberguess(int min, int max);
 
 // Function to check the Time it took to load the config file
-void loadtime();
+void loadtime(bool useOtherConfig, std::string content);

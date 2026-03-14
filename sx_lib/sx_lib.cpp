@@ -27,6 +27,16 @@ std::unordered_map<std::string, std::string> loadConfig()
 }
 
 
+// Load the Config File and return a Map with the Settings from
+// the Argument given
+std::unordered_map<std::string, std::string> loadConfigfromString(std::string arg)
+{
+	auto result = KeyValueParser::parse_kvp2(arg);
+
+	return result;
+}
+
+
 // Load the Config and return the value for the given key
 std::string SXLibConfig::getSetting(const std::string& key,
 	std::unordered_map<std::string, std::string> settings)

@@ -129,6 +129,9 @@ and set the Command you want to call on Button Click
 --windows-sx-ui-button16-name=echo Hallo World
 ```
 
+SX must be in Path to use the UI, because the UI is a Wrapper
+for SX and calls the Commands via SX
+
 
 ## Info
 

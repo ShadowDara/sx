@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
 		//std::cout << numberguessConfig.getSetting("lol", config);
 		
 		std::string minS = numberguessConfig.getSetting("min", config);
-		std::string maxS = numberguessConfig.getSetting("min", config);
+		std::string maxS = numberguessConfig.getSetting("max", config);
 		
 		int min;
 		int max;
@@ -48,15 +48,43 @@ int main(int argc, char* argv[])
 		{
 			numberguess(min, max);
 		}
+		else
+		{
+			numberguess(1, 1000);
+		}
 
-		numberguess(1, 1000);
 		return 0;
 	}
 
 	// Check for the loadtime function
 	if (std::string(argv[1]) == "--loadtime" || std::string(argv[1]) == "-l")
 	{
-		loadtime();
+		std::string content = "";
+		bool useOtherConfig = true;
+
+		if (argc > 2)
+		{
+			std::string filename = argv[2];
+
+			std::cout << "Trying to load file: " << filename << std::endl;
+
+			std::ifstream file{ filename };
+			if (!file) {
+				perror("Could not open Config File\n");
+				useOtherConfig = false;
+			}
+
+			content = std::string(
+				(std::istreambuf_iterator<char>(file)),
+				std::istreambuf_iterator<char>()
+			);
+		}
+		else
+		{
+			useOtherConfig = false;
+		}
+
+		loadtime(useOtherConfig, content);
 		return 0;
 	}
 }

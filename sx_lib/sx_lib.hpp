@@ -20,6 +20,10 @@
 // Function to load the Config File and return a Map with the Settings
 std::unordered_map<std::string, std::string> loadConfig();
 
+// Load the Config File and return a Map with the Settings from
+// the Argument given
+std::unordered_map<std::string, std::string> loadConfigfromString(std::string arg);
+
 
 // Config for SX Addons and Extensions
 struct SXLibConfig {

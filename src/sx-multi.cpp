@@ -58,17 +58,36 @@ void numberguess(int min, int max)
 
 
 // Function to check the Time it took to load the config file
-void loadtime()
+void loadtime(bool useOtherConfig, std::string content)
 {
-	auto start = std::chrono::high_resolution_clock::now();
+	if (useOtherConfig)
+	{
+		std::cout << "Loading config from file: " << content << "\n";
 
-	auto config = loadConfig();
+		auto start = std::chrono::high_resolution_clock::now();
 
-	auto end = std::chrono::high_resolution_clock::now();
+		auto config = loadConfigfromString(content);
 
-	std::chrono::duration<double> elapsed = end - start;
+		auto end = std::chrono::high_resolution_clock::now();
 
-	std::cout << "Time to load config: " << elapsed.count() << " seconds\n";
+		std::chrono::duration<double> elapsed = end - start;
+
+		std::cout << "Time to load config: " << elapsed.count() << " seconds\n";
+	}
+	else
+	{
+		std::cout << "Loading config from default file: sx.conf\n";
+
+		auto start = std::chrono::high_resolution_clock::now();
+
+		auto config = loadConfig();
+
+		auto end = std::chrono::high_resolution_clock::now();
+
+		std::chrono::duration<double> elapsed = end - start;
+
+		std::cout << "Time to load config: " << elapsed.count() << " seconds\n";
+	}
 
 	return;
 }

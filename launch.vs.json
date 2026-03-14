@@ -1,6 +1,4 @@
 {
-  "version": "0.2.1",
-  "defaults": {},
   "configurations": [
     {
       "type": "default",
@@ -55,6 +53,19 @@
       "args": [
         "--loadtime"
       ]
+    },
+    {
+      "type": "default",
+      "name": "Loadtime Full Conf",
+      "project": "CMakeLists.txt",
+      "projectTarget": "sx-multi.exe",
+      "args": [
+        "--loadtime",
+        "\"C:/Users/schueler/source/repos/Shortcuter/example_sx.conf\""
+      ],
+      "cwd": "${workspaceRoot}"
     }
-  ]
+  ],
+  "defaults": {},
+  "version": "0.2.1"
 }
