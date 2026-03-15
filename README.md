@@ -28,6 +28,9 @@ hi=echo Hallo World
 All SX Settings:
 
 ```ini
+# Echo Commands before running them, true or false - Default is false
+--echo-commands=false
+
 # Option to change the Default Start Message to for example
 # Set to true for this!
 --overwrite-start-message=false

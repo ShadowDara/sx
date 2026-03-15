@@ -80,6 +80,20 @@ int runShortcut(int argc, char* argv[],
 	// Base command from config
 	std::string command = it->second;
 
+	// Check for echo the Command
+	auto it2 = result.find("--echo-commands");
+	if (it2 == result.end())
+	{
+		// DO NOTHING
+	}
+	else
+	{
+		if (it2->second == "true")
+		{
+			std::cout << command << "\n";
+		}
+	}
+
 	// Check if its a reserved Keyword
 	for (auto entry: ReservedCommands)
 	{
