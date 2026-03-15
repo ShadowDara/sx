@@ -3,6 +3,7 @@
 #include <iostream>
 #include <random>
 #include <chrono>
+#include <filesystem>
 
 #include "../sx_lib/sx_lib.hpp"
 #include "sx-multi_config.hpp"
@@ -16,3 +17,6 @@ void numberguess(int min, int max);
 
 // Function to check the Time it took to load the config file
 void loadtime(bool useOtherConfig, std::string content);
+
+// Function to check the size of a folder
+void foldersize(std::string path);

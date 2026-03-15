@@ -87,4 +87,16 @@ int main(int argc, char* argv[])
 		loadtime(useOtherConfig, content);
 		return 0;
 	}
+
+	// Check for Foldersize
+	if (std::string(argv[1]) == "--foldersize" || std::string(argv[1]) == "-f")
+	{
+		std::string path = ".";
+		if (argc > 2)
+		{
+			path = argv[2];
+		}
+		foldersize(path);
+		return 0;
+	}
 }

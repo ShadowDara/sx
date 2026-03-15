@@ -75,6 +75,15 @@
         "\"example_sx.conf\""
       ],
       "currentDir": "${workspaceRoot}"
+    },
+    {
+      "type": "default",
+      "name": "Foldersize",
+      "project": "CMakeLists.txt",
+      "projectTarget": "sx-multi.exe",
+      "args": [
+        "--foldersize"
+      ]
     }
   ],
   "defaults": {},

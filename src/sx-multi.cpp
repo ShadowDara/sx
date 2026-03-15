@@ -1,5 +1,8 @@
 #include "sx-multi.hpp"
 
+namespace fs = std::filesystem;
+
+#pragma region Help
 
 // Function to print the help message for the Multi Tool
 int printhelp()
@@ -10,6 +13,7 @@ int printhelp()
 		<< "Currently it includes:\n"
 		<< " --numberguess, -n: A simple number guessing game.\n"
 		<< " --loadtime, -l: Check the time it took to load the config file.\n"
+		<< " --foldersize, -f: Check the size of a folder.\n"
 		<< "\n"
 		<< "Usage:\n"
 		<< " - Run the program and follow the instructions for the selected tool or game.\n"
@@ -19,6 +23,9 @@ int printhelp()
 	return 0;
 }
 
+#pragma endregion
+
+#pragma region NumberGuess
 
 // Function to run the number guessing game
 void numberguess(int min, int max)
@@ -56,6 +63,9 @@ void numberguess(int min, int max)
 	}
 }
 
+#pragma endregion
+
+#pragma region LoadTime
 
 // Function to check the Time it took to load the config file
 void loadtime(bool useOtherConfig, std::string content)
@@ -91,3 +101,39 @@ void loadtime(bool useOtherConfig, std::string content)
 
 	return;
 }
+
+#pragma endregion
+
+#pragma region FolderSize
+
+std::uintmax_t folder_size(const fs::path& path)
+{
+	std::uintmax_t size = 0;
+
+	for (const auto& entry : fs::recursive_directory_iterator(path))
+	{
+		if (fs::is_regular_file(entry))
+		{
+			size += fs::file_size(entry);
+		}
+	}
+
+	return size;
+}
+
+
+// Function to check the size of a folder
+void foldersize(std::string path)
+{
+	try
+	{
+		auto size = folder_size(path);
+		std::cout << "Ordnergröße: " << size << " Bytes\n";
+	}
+	catch (const fs::filesystem_error& e)
+	{
+		std::cerr << "Fehler: " << e.what() << '\n';
+	}
+}
+
+#pragma endregion
