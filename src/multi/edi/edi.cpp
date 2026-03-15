@@ -11,13 +11,58 @@
 #include <conio.h> // Für _getch() auf Windows
 #include <fstream>
 
+
+struct ConsoleChar {
+    char ch;
+    WORD attr;
+};
+
 std::vector<std::string> buffer;
 int cur_x = 0;
 int cur_y = 0;
 
+DWORD originalConsoleMode;
+
+std::vector<ConsoleChar> saved_screen;
+COORD screen_size;
 HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
 HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
-DWORD originalConsoleMode;
+
+void save_screen() {
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    GetConsoleScreenBufferInfo(hOut, &csbi);
+    screen_size = csbi.dwSize;
+
+    int total_cells = csbi.dwSize.X * csbi.dwSize.Y;
+    saved_screen.resize(total_cells);
+
+    CHAR_INFO* chars = new CHAR_INFO[total_cells];
+    COORD bufSize = csbi.dwSize;
+    COORD bufCoord{ 0,0 };
+    SMALL_RECT readRegion{ 0,0,csbi.dwSize.X - 1, csbi.dwSize.Y - 1 };
+    ReadConsoleOutput(hOut, chars, bufSize, bufCoord, &readRegion);
+
+    for (int i = 0; i < total_cells; i++) {
+        saved_screen[i].ch = chars[i].Char.AsciiChar;
+        saved_screen[i].attr = chars[i].Attributes;
+    }
+
+    delete[] chars;
+}
+
+void restore_screen() {
+    int total_cells = screen_size.X * screen_size.Y;
+    CHAR_INFO* chars = new CHAR_INFO[total_cells];
+    for (int i = 0; i < total_cells; i++) {
+        chars[i].Char.AsciiChar = saved_screen[i].ch;
+        chars[i].Attributes = saved_screen[i].attr;
+    }
+    COORD bufSize = screen_size;
+    COORD bufCoord{ 0,0 };
+    SMALL_RECT writeRegion{ 0,0,screen_size.X - 1,screen_size.Y - 1 };
+    WriteConsoleOutput(hOut, chars, bufSize, bufCoord, &writeRegion);
+    delete[] chars;
+}
 
 // Alternate Screen Buffer
 HANDLE hAltBuffer;
@@ -58,13 +103,16 @@ void move_cursor(int x, int y) {
 
 // Zeichne nur den existierenden Text + Header einmal
 void draw_screen() {
-    COORD pos{ 0, 0 };
-    SetConsoleCursorPosition(hAltBuffer, pos);
-    std::cout << "Mini-Terminal-Editor (ESC = Exit, Ctrl+S = Save)\n";
+    COORD pos{ 0,0 };
+    SetConsoleCursorPosition(hOut, pos);
+    DWORD written;
+    std::string header = "Mini-Terminal-Editor (ESC=Exit, Ctrl+S=Save)\n";
+    WriteConsoleA(hOut, header.c_str(), header.size(), &written, NULL);
     for (auto& line : buffer) {
-        std::cout << line << std::string(80 - line.size(), ' ') << "\n"; // Zeile auffüllen
+        std::string out_line = line + "\n";
+        WriteConsoleA(hOut, out_line.c_str(), out_line.size(), &written, NULL);
     }
-    SetConsoleCursorPosition(hAltBuffer, { static_cast<SHORT>(cur_x), static_cast<SHORT>(cur_y + 1) });
+    SetConsoleCursorPosition(hOut, { static_cast<SHORT>(cur_x), static_cast<SHORT>(cur_y + 1) });
 }
 
 bool is_line_empty(const std::string& line) {
@@ -99,49 +147,74 @@ int main(int argc, char* argv[]) {
     while (std::getline(in, line)) buffer.push_back(line);
     if (buffer.empty()) buffer.push_back("");
 
-    enable_alternate_screen();
+    // Screen sichern
+    save_screen();
+
+    // Editor Screen leeren
+    system("cls");
     draw_screen();
 
-    int ch;
     while (true) {
-        ch = _getch();
-        if (ch == 27) break;       // ESC
-        else if (ch == 19) save_file(filename); // Ctrl+S
-        else if (ch == 8) {        // Backspace
-            if (cur_x > 0) {
-                buffer[cur_y].erase(cur_x - 1, 1);
-                --cur_x;
+        INPUT_RECORD rec;
+        DWORD n;
+        ReadConsoleInput(hIn, &rec, 1, &n);
+        if (rec.EventType == KEY_EVENT && rec.Event.KeyEvent.bKeyDown)
+        {
+            auto& key = rec.Event.KeyEvent;
+            char ch = key.uChar.AsciiChar;
+
+            if (key.wVirtualKeyCode == VK_ESCAPE)
+            { 
+                break;
             }
-            else if (cur_y > 0) {
-                cur_x = buffer[cur_y - 1].size();
-                buffer[cur_y - 1] += buffer[cur_y];
-                buffer.erase(buffer.begin() + cur_y);
-                --cur_y;
+            else if (key.wVirtualKeyCode == 'S' && key.dwControlKeyState & LEFT_CTRL_PRESSED)
+            {
+                save_file(filename);
             }
+            else if (ch >= 32 && ch <= 126)
+            { // Printable
+                buffer[cur_y].insert(buffer[cur_y].begin() + cur_x, ch);
+                ++cur_x;
+            }
+            else if (key.wVirtualKeyCode == VK_BACK)
+            {
+                if (cur_x > 0)
+                {
+                    buffer[cur_y].erase(cur_x - 1, 1);
+                    --cur_x;
+                }
+                else if (cur_y > 0)
+                {
+                    cur_x = buffer[cur_y - 1].size();
+                    buffer[cur_y - 1] += buffer[cur_y];
+                    buffer.erase(buffer.begin() + cur_y);
+                    --cur_y;
+                }
+            }
+            else if (key.wVirtualKeyCode == VK_RETURN)
+            {
+                std::string rem = buffer[cur_y].substr(cur_x);
+                buffer[cur_y] = buffer[cur_y].substr(0, cur_x);
+                buffer.insert(buffer.begin() + cur_y + 1, rem);
+                ++cur_y;
+                cur_x = 0;
+            }
+            else if (key.wVirtualKeyCode == VK_LEFT && cur_x > 0)
+            {
+                cur_x--;
+            }
+            else if (key.wVirtualKeyCode == VK_RIGHT && cur_x < (int)buffer[cur_y].size())
+            {
+                cur_x++;
+            }
+            else if (key.wVirtualKeyCode == VK_UP && cur_y > 0) cur_y--;
+            else if (key.wVirtualKeyCode == VK_DOWN && cur_y + 1 < (int)buffer.size()) cur_y++;
+
+            draw_screen();
         }
-        else if (ch == 13) { // Enter
-            std::string remainder = buffer[cur_y].substr(cur_x);
-            buffer[cur_y] = buffer[cur_y].substr(0, cur_x);
-            buffer.insert(buffer.begin() + cur_y + 1, remainder);
-            ++cur_y;
-            cur_x = 0;
-        }
-        else if (ch == 224) { // Arrow keys & DEL
-            ch = _getch();
-            if (ch == 72 && cur_y > 0) cur_y--; // Up
-            else if (ch == 80 && cur_y + 1 < (int)buffer.size()) cur_y++; // Down
-            else if (ch == 75 && cur_x > 0) cur_x--; // Left
-            else if (ch == 77 && cur_x < (int)buffer[cur_y].size()) cur_x++; // Right
-            else if (ch == 83 && cur_x < (int)buffer[cur_y].size()) buffer[cur_y].erase(cur_x, 1); // DEL
-        }
-        else if (ch >= 32 && ch <= 126) {
-            buffer[cur_y].insert(buffer[cur_y].begin() + cur_x, (char)ch);
-            ++cur_x;
-        }
-        draw_screen();
     }
 
-    disable_alternate_screen();
+    // Clear screen beim Beenden
+    system("cls");
     std::cout << "Datei gespeichert als " << filename << "\n";
 }
-
