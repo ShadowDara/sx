@@ -94,18 +94,6 @@ int runShortcut(int argc, char* argv[],
 		}
 	}
 
-	// Check if its a reserved Keyword
-	for (auto entry: ReservedCommands)
-	{
-		// std::cout << entry << " ! " << it->first << "\n";
-		if (entry == it->first)
-		{
-			std::cout << RED << "[ERROR] " << YELLOW << it->first
-				<< END << " is a reserved Keyword! It can not be used as Shortcut!\n";
-			return 1;
-		}
-	}
-
 	// Append additional arguments
 	for (int i = 2; i < argc; ++i)
 	{
@@ -171,11 +159,55 @@ void printNewStartMessage(std::unordered_map<std::string, std::string>& result)
         return;
     }
 
+#pragma region Color
+
+	std::string color = WHITE;
+
+	// Get the Color
+	auto it3 = result.find("--start-message-color");
+	if (it3 == result.end())
+	{
+		
+	}
+	else
+	{
+		if (it3->second == "Black")
+		{
+			color = BLACK;
+		}
+		else if (it3->second == "Red")
+		{
+			color = RED;
+		}
+		else if (it3->second == "Green")
+		{
+			color = GREEN;
+		}
+		else if (it3->second == "Yellow")
+		{
+			color = YELLOW;
+		}
+		else if (it3->second == "Blue")
+		{
+			color = BLUE;
+		}
+		else if (it3->second == "Purple")
+		{
+			color = PURPLE;
+		}
+		else if (it3->second == "Cyan")
+		{
+			color = CYAN;
+		}
+	}
+
+#pragma endregion
+
     std::string line;
     while (std::getline(file, line))
 	{
 		// Zeilenweise lesen
-        std::cout << line << '\n';      // In die Konsole ausgeben
+        std::cout << color << line << END << std::endl;      // In die Konsole ausgeben
     }
 
     file.close(); // optional, da Destruktor automatisch schließt
@@ -188,7 +220,7 @@ void printNewStartMessage(std::unordered_map<std::string, std::string>& result)
 
 	if (it2->second == "true")
 	{
-		std::cout << "SX Version " Version " - BuildTime " BuildTime "\n";
+		std::cout << GREEN "SX Version " Version " - BuildTime " BuildTime END"\n";
 	}
 
     return;

@@ -38,7 +38,10 @@ All SX Settings:
 # Enter here the File name! Path starts in the Home Directory
 --start-message-file=empty.txt
 
-# View my dotfiles for Examples!
+# Color for the Custom Start Message
+# Default is White
+# Options: White, Black, Red, Green, Yellow, Blue, Purple, Cyan
+--start-message-color=White
 
 # Change the Default Terminal Shell which is used on Windows
 --windows-default-shell=cmd
