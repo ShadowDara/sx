@@ -1,220 +1,503 @@
-// edi 3.0
-// Dynamischer Terminal-Editor in modernem C++
-// By Shadowdara
-// Apache-2.0 2026
+﻿/*
+ * mined — Minimalistischer Terminal Editor (Windows, reine WinAPI)
+ *
+ * Steuerung:
+ *   Pfeiltasten     Cursor bewegen
+ *   Ctrl+S          Speichern
+ *   Ctrl+Q          Beenden
+ *   Ctrl+F          Suchen
+ *   Ctrl+Z          Rueckgaengig
+ *   Backspace/Del   Zeichen loeschen
+ *   Enter           Neue Zeile
+ *   PgUp/PgDn       Seite blaettern
+ *   Home/End        Zeilenanfang/-ende
+ *
+ * Kompilieren (MSVC Developer-Prompt):
+ *   cl /std:c++17 /O2 /EHsc mined.cpp /Fe:mined.exe
+ *
+ * Kompilieren (MinGW / g++):
+ *   g++ -std=c++17 -O2 -o mined.exe mined.cpp
+ *
+ * Funktioniert in: cmd.exe, PowerShell, Windows Terminal
+ * Benoetigt: Windows 7+ (keine ANSI/VT-Unterstuetzung noetig)
+ */
 
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <iostream>
+#include <algorithm>
 #include <fstream>
 #include <string>
 #include <vector>
-#include <conio.h> // F�r _getch() auf Windows
-#include <fstream>
 
+ // ─── Handles & gespeicherter Konsolenzustand ─────────────────────────────────
 
-struct ConsoleChar {
-    char ch;
-    WORD attr;
+static HANDLE hOut = INVALID_HANDLE_VALUE;
+static HANDLE hIn = INVALID_HANDLE_VALUE;
+static DWORD  origInMode = 0;
+static DWORD  origOutMode = 0;
+static CONSOLE_CURSOR_INFO origCursor;
+
+void restoreConsole() {
+    if (hIn != INVALID_HANDLE_VALUE) SetConsoleMode(hIn, origInMode);
+    if (hOut != INVALID_HANDLE_VALUE) {
+        SetConsoleMode(hOut, origOutMode);
+        SetConsoleCursorInfo(hOut, &origCursor);
+    }
+}
+
+void setupConsole() {
+    hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    hIn = GetStdHandle(STD_INPUT_HANDLE);
+
+    GetConsoleMode(hOut, &origOutMode);
+    GetConsoleMode(hIn, &origInMode);
+    GetConsoleCursorInfo(hOut, &origCursor);
+
+    // Roheingabe: Events einzeln lesen, kein automatisches Echo
+    SetConsoleMode(hIn, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
+
+    // Ausgabe: Standard (kein VT, kein ANSI — alles per API)
+    SetConsoleMode(hOut, ENABLE_PROCESSED_OUTPUT);
+
+    SetConsoleOutputCP(CP_ACP);
+    SetConsoleCP(CP_ACP);
+
+    atexit(restoreConsole);
+}
+
+// ─── Hilfsfunktionen Konsole ─────────────────────────────────────────────────
+
+void getWindowSize(int& rows, int& cols) {
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    if (GetConsoleScreenBufferInfo(hOut, &csbi)) {
+        cols = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+        rows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+    }
+    else {
+        rows = 24; cols = 80;
+    }
+}
+
+void setCursorPos(int x, int y) {
+    COORD c = { (SHORT)x, (SHORT)y };
+    SetConsoleCursorPosition(hOut, c);
+}
+
+void setCursorVisible(bool visible) {
+    CONSOLE_CURSOR_INFO ci;
+    ci.dwSize = 20;
+    ci.bVisible = visible ? TRUE : FALSE;
+    SetConsoleCursorInfo(hOut, &ci);
+}
+
+// Eine Zeile an Position (row) mit gegebenem Text und Attribut schreiben.
+// Füllt die gesamte Zeile auf screenCols auf.
+void writeLine(int row, int screenCols, const std::string& text, WORD attr) {
+    COORD coord = { 0, (SHORT)row };
+    DWORD written;
+
+    // Puffer mit Leerzeichen auffüllen
+    std::string buf = text;
+    if ((int)buf.size() < screenCols)
+        buf += std::string(screenCols - buf.size(), ' ');
+    else
+        buf = buf.substr(0, screenCols);
+
+    WriteConsoleOutputCharacterA(hOut, buf.c_str(), (DWORD)buf.size(), coord, &written);
+    FillConsoleOutputAttribute(hOut, attr, (DWORD)buf.size(), coord, &written);
+}
+
+// Gesamten sichtbaren Bereich leeren
+void clearScreen(int rows, int cols) {
+    COORD origin = { 0, 0 };
+    DWORD written;
+    WORD  attr = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+    FillConsoleOutputCharacterA(hOut, ' ', (DWORD)(rows * cols), origin, &written);
+    FillConsoleOutputAttribute(hOut, attr, (DWORD)(rows * cols), origin, &written);
+}
+
+// ─── Tastencodes ─────────────────────────────────────────────────────────────
+
+enum Key {
+    KEY_CTRL_F = 6,
+    KEY_CTRL_Q = 17,
+    KEY_CTRL_S = 19,
+    KEY_CTRL_Z = 26,
+    KEY_ENTER = 13,
+    KEY_BACKSPACE = 8,
+    KEY_ESCAPE = 27,
+    KEY_ARROW_UP = 1000,
+    KEY_ARROW_DOWN,
+    KEY_ARROW_LEFT,
+    KEY_ARROW_RIGHT,
+    KEY_HOME,
+    KEY_END,
+    KEY_DEL,
+    KEY_PAGE_UP,
+    KEY_PAGE_DOWN,
 };
 
-std::vector<std::string> buffer;
-int cur_x = 0;
-int cur_y = 0;
+int readKey() {
+    while (true) {
+        INPUT_RECORD ir;
+        DWORD count = 0;
+        if (!ReadConsoleInputA(hIn, &ir, 1, &count) || count == 0) continue;
 
-DWORD originalConsoleMode;
+        // Fenstergröße geändert → ignorieren (Editor re-rendert beim nächsten Tastendruck)
+        if (ir.EventType == WINDOW_BUFFER_SIZE_EVENT) return -1;
+        if (ir.EventType != KEY_EVENT)                continue;
+        if (!ir.Event.KeyEvent.bKeyDown)              continue;
 
-std::vector<ConsoleChar> saved_screen;
-COORD screen_size;
-HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
+        WORD vk = ir.Event.KeyEvent.wVirtualKeyCode;
+        DWORD mod = ir.Event.KeyEvent.dwControlKeyState;
+        char  ch = ir.Event.KeyEvent.uChar.AsciiChar;
 
-void save_screen() {
-    CONSOLE_SCREEN_BUFFER_INFO csbi;
-    GetConsoleScreenBufferInfo(hOut, &csbi);
-    screen_size = csbi.dwSize;
+        bool ctrl = (mod & (LEFT_CTRL_PRESSED | RIGHT_CTRL_PRESSED)) != 0;
 
-    int total_cells = csbi.dwSize.X * csbi.dwSize.Y;
-    saved_screen.resize(total_cells);
+        if (ctrl) {
+            switch (vk) {
+            case 'S': return KEY_CTRL_S;
+            case 'Q': return KEY_CTRL_Q;
+            case 'F': return KEY_CTRL_F;
+            case 'Z': return KEY_CTRL_Z;
+            }
+        }
 
-    CHAR_INFO* chars = new CHAR_INFO[total_cells];
-    COORD bufSize = csbi.dwSize;
-    COORD bufCoord{ 0,0 };
-    SMALL_RECT readRegion{ 0,0,csbi.dwSize.X - 1, csbi.dwSize.Y - 1 };
-    ReadConsoleOutput(hOut, chars, bufSize, bufCoord, &readRegion);
+        switch (vk) {
+        case VK_UP:     return KEY_ARROW_UP;
+        case VK_DOWN:   return KEY_ARROW_DOWN;
+        case VK_LEFT:   return KEY_ARROW_LEFT;
+        case VK_RIGHT:  return KEY_ARROW_RIGHT;
+        case VK_HOME:   return KEY_HOME;
+        case VK_END:    return KEY_END;
+        case VK_DELETE: return KEY_DEL;
+        case VK_PRIOR:  return KEY_PAGE_UP;
+        case VK_NEXT:   return KEY_PAGE_DOWN;
+        case VK_RETURN: return KEY_ENTER;
+        case VK_BACK:   return KEY_BACKSPACE;
+        case VK_ESCAPE: return KEY_ESCAPE;
+        }
 
-    for (int i = 0; i < total_cells; i++) {
-        saved_screen[i].ch = chars[i].Char.AsciiChar;
-        saved_screen[i].attr = chars[i].Attributes;
+        if (ch >= 32 && ch < 127) return (unsigned char)ch;
+    }
+}
+
+// ─── Undo ────────────────────────────────────────────────────────────────────
+
+struct UndoEntry {
+    std::vector<std::string> lines;
+    int cx, cy;
+};
+
+// ─── Editor ──────────────────────────────────────────────────────────────────
+
+struct Editor {
+    std::vector<std::string> lines;
+    int cx = 0, cy = 0;
+    int rowoff = 0, coloff = 0;
+    int screenRows = 24, screenCols = 80;
+    bool dirty = false;
+    std::string filename;
+    std::string statusMsg;
+    std::vector<UndoEntry> undoStack;
+
+    // Farbattribute
+    WORD attrNormal = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+    WORD attrTilde = FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+    WORD attrStatus = BACKGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+    WORD attrHelp = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+    WORD attrPrompt = BACKGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+
+    Editor() { lines.push_back(""); }
+
+    // ── Datei ────────────────────────────────────────────────────────────────
+    void open(const std::string& fname) {
+        filename = fname;
+        lines.clear();
+        std::ifstream f(fname);
+        if (f.is_open()) {
+            std::string l;
+            while (std::getline(f, l)) {
+                if (!l.empty() && l.back() == '\r') l.pop_back();
+                lines.push_back(l);
+            }
+        }
+        if (lines.empty()) lines.push_back("");
+        dirty = false;
     }
 
-    delete[] chars;
-}
-
-void restore_screen() {
-    int total_cells = screen_size.X * screen_size.Y;
-    CHAR_INFO* chars = new CHAR_INFO[total_cells];
-    for (int i = 0; i < total_cells; i++) {
-        chars[i].Char.AsciiChar = saved_screen[i].ch;
-        chars[i].Attributes = saved_screen[i].attr;
+    bool save() {
+        if (filename.empty()) {
+            filename = promptInput("Dateiname: ");
+            if (filename.empty()) { setStatus("Abgebrochen."); return false; }
+        }
+        std::ofstream f(filename);
+        if (!f.is_open()) { setStatus("Fehler beim Speichern!"); return false; }
+        for (size_t i = 0; i < lines.size(); i++) {
+            f << lines[i];
+            if (i + 1 < lines.size()) f << "\r\n";
+        }
+        dirty = false;
+        setStatus("Gespeichert: " + filename);
+        return true;
     }
-    COORD bufSize = screen_size;
-    COORD bufCoord{ 0,0 };
-    SMALL_RECT writeRegion{ 0,0,screen_size.X - 1,screen_size.Y - 1 };
-    WriteConsoleOutput(hOut, chars, bufSize, bufCoord, &writeRegion);
-    delete[] chars;
-}
 
-// Alternate Screen Buffer
-HANDLE hAltBuffer;
-HANDLE hMainBuffer;
-
-void enable_alternate_screen() {
-    hMainBuffer = hOut;
-    hAltBuffer = CreateConsoleScreenBuffer(
-        GENERIC_READ | GENERIC_WRITE,
-        0,
-        NULL,
-        CONSOLE_TEXTMODE_BUFFER,
-        NULL
-    );
-    SetConsoleActiveScreenBuffer(hAltBuffer);
-
-    // Save original mode
-    GetConsoleMode(hIn, &originalConsoleMode);
-    DWORD mode = originalConsoleMode;
-    mode &= ~(ENABLE_LINE_INPUT | ENABLE_ECHO_INPUT);
-    SetConsoleMode(hIn, mode);
-}
-
-void disable_alternate_screen() {
-    SetConsoleActiveScreenBuffer(hMainBuffer);
-    SetConsoleMode(hIn, originalConsoleMode);
-    CloseHandle(hAltBuffer);
-}
-
-void help() {
-    std::cout << "Mini-Terminal-Editor Help\n"
-        << "ESC = Exit, Ctrl+S = Save\n";
-}
-
-void move_cursor(int x, int y) {
-    std::cout << "\x1b[" << (y + 1) << ";" << (x + 1) << "H";
-}
-
-// Zeichne nur den existierenden Text + Header einmal
-void draw_screen() {
-    COORD pos{ 0,0 };
-    SetConsoleCursorPosition(hOut, pos);
-    DWORD written;
-    std::string header = "Mini-Terminal-Editor (ESC=Exit, Ctrl+S=Save)\n";
-    WriteConsoleA(hOut, header.c_str(), header.size(), &written, NULL);
-    for (auto& line : buffer) {
-        std::string out_line = line + "\n";
-        WriteConsoleA(hOut, out_line.c_str(), out_line.size(), &written, NULL);
+    // ── Undo ─────────────────────────────────────────────────────────────────
+    void pushUndo() {
+        if (undoStack.size() >= 50) undoStack.erase(undoStack.begin());
+        undoStack.push_back({ lines, cx, cy });
     }
-    SetConsoleCursorPosition(hOut, { static_cast<SHORT>(cur_x), static_cast<SHORT>(cur_y + 1) });
-}
 
-bool is_line_empty(const std::string& line) {
-    for (char c : line)
-        if (c != ' ' && c != '\t') return false;
-    return true;
-}
+    void undo() {
+        if (undoStack.empty()) { setStatus("Nichts rueckgaengig."); return; }
+        auto& e = undoStack.back();
+        lines = e.lines; cx = e.cx; cy = e.cy;
+        undoStack.pop_back();
+        dirty = true;
+        setStatus("Rueckgaengig.");
+    }
 
-void save_file(const std::string& filename) {
-    std::ofstream out(filename);
-    if (!out) return;
-
-    int last_nonempty = buffer.size() - 1;
-    for (int i = buffer.size() - 1; i >= 0; --i) {
-        if (!is_line_empty(buffer[i])) {
-            last_nonempty = i;
+    // ── Cursor ───────────────────────────────────────────────────────────────
+    void moveCursor(int key) {
+        switch (key) {
+        case KEY_ARROW_LEFT:
+            if (cx > 0) cx--;
+            else if (cy > 0) { cy--; cx = (int)lines[cy].size(); }
             break;
+        case KEY_ARROW_RIGHT:
+            if (cx < (int)lines[cy].size()) cx++;
+            else if (cy < (int)lines.size() - 1) { cy++; cx = 0; }
+            break;
+        case KEY_ARROW_UP:
+            if (cy > 0) { cy--; cx = std::min(cx, (int)lines[cy].size()); }
+            break;
+        case KEY_ARROW_DOWN:
+            if (cy < (int)lines.size() - 1) { cy++; cx = std::min(cx, (int)lines[cy].size()); }
+            break;
+        case KEY_HOME:     cx = 0; break;
+        case KEY_END:      cx = (int)lines[cy].size(); break;
+        case KEY_PAGE_UP:
+            cy = std::max(0, cy - (screenRows - 2));
+            cx = std::min(cx, (int)lines[cy].size()); break;
+        case KEY_PAGE_DOWN:
+            cy = std::min((int)lines.size() - 1, cy + (screenRows - 2));
+            cx = std::min(cx, (int)lines[cy].size()); break;
         }
     }
 
-    for (int i = 0; i <= last_nonempty; ++i) {
-        out << buffer[i] << "\n";
+    // ── Bearbeiten ───────────────────────────────────────────────────────────
+    void insertChar(char c) {
+        pushUndo();
+        lines[cy].insert(cx, 1, c);
+        cx++; dirty = true;
     }
-}
 
+    void insertNewline() {
+        pushUndo();
+        std::string rest = lines[cy].substr(cx);
+        lines[cy].erase(cx);
+        lines.insert(lines.begin() + cy + 1, rest);
+        cy++; cx = 0; dirty = true;
+    }
 
-int main(int argc, char* argv[]) {
-    std::string filename = (argc > 1) ? argv[1] : "output.txt";
+    void deleteChar() {
+        if (cx == 0 && cy == 0) return;
+        pushUndo();
+        if (cx > 0) { lines[cy].erase(cx - 1, 1); cx--; }
+        else {
+            int nx = (int)lines[cy - 1].size();
+            lines[cy - 1] += lines[cy];
+            lines.erase(lines.begin() + cy);
+            cy--; cx = nx;
+        }
+        dirty = true;
+    }
 
-    std::ifstream in(filename);
-    std::string line;
-    while (std::getline(in, line)) buffer.push_back(line);
-    if (buffer.empty()) buffer.push_back("");
+    void deleteCharForward() {
+        if (cx < (int)lines[cy].size()) {
+            pushUndo(); lines[cy].erase(cx, 1); dirty = true;
+        }
+        else if (cy < (int)lines.size() - 1) {
+            pushUndo(); lines[cy] += lines[cy + 1];
+            lines.erase(lines.begin() + cy + 1); dirty = true;
+        }
+    }
 
-    // Screen sichern
-    save_screen();
+    // ── Suchen ───────────────────────────────────────────────────────────────
+    void search() {
+        std::string q = promptInput("Suchen: ");
+        if (q.empty()) return;
+        for (int i = cy; i < (int)lines.size(); i++) {
+            size_t start = (i == cy) ? (size_t)(cx + 1) : 0;
+            size_t pos = lines[i].find(q, start);
+            if (pos != std::string::npos) { cy = i; cx = (int)pos; setStatus("Gefunden."); return; }
+        }
+        for (int i = 0; i <= cy; i++) {
+            size_t pos = lines[i].find(q);
+            if (pos != std::string::npos) { cy = i; cx = (int)pos; setStatus("Gefunden (von vorne)."); return; }
+        }
+        setStatus("Nicht gefunden: " + q);
+    }
 
-    // Editor Screen leeren
-    system("cls");
-    draw_screen();
+    // ── Prompt ───────────────────────────────────────────────────────────────
+    std::string promptInput(const std::string& msg) {
+        std::string buf;
+        while (true) {
+            // Prompt-Zeile rendern
+            std::string display = msg + buf + "_";
+            writeLine(screenRows, screenCols, display, attrPrompt);
+            setCursorPos((int)(msg.size() + buf.size()), screenRows);
 
-    while (true) {
-        INPUT_RECORD rec;
-        DWORD n;
-        ReadConsoleInput(hIn, &rec, 1, &n);
-        if (rec.EventType == KEY_EVENT && rec.Event.KeyEvent.bKeyDown)
+            int k = readKey();
+            if (k == KEY_ENTER)              break;
+            if (k == KEY_ESCAPE) { buf.clear(); break; }
+            if (k == KEY_BACKSPACE && !buf.empty()) buf.pop_back();
+            else if (k >= 32 && k < 127)    buf += (char)k;
+        }
+        return buf;
+    }
+
+    void setStatus(const std::string& msg) { statusMsg = msg; }
+
+    // ── Scroll ───────────────────────────────────────────────────────────────
+    void scroll() {
+        if (cy < rowoff) rowoff = cy;
+        if (cy >= rowoff + screenRows - 1) rowoff = cy - screenRows + 2;
+        if (cx < coloff) coloff = cx;
+        if (cx >= coloff + screenCols) coloff = cx - screenCols + 1;
+    }
+
+    // ─── Render ──────────────────────────────────────────────────────────────
+    void render() {
+        // Konsolengröße neu abfragen (bei Resize)
+        int newRows, newCols;
+        getWindowSize(newRows, newCols);
+        if (newRows != screenRows + 2 || newCols != screenCols) {
+            screenRows = newRows - 2;
+            screenCols = newCols;
+        }
+
+        scroll();
+        setCursorVisible(false);
+
+        // ── Textzeilen ───────────────────────────────────────────────────────
+        for (int y = 0; y < screenRows - 1; y++) {
+            int fileRow = y + rowoff;
+            if (fileRow < (int)lines.size()) {
+                const std::string& l = lines[fileRow];
+                int start = std::min(coloff, (int)l.size());
+                std::string vis = l.substr(start);
+                writeLine(y, screenCols, vis, attrNormal);
+            }
+            else {
+                // Tilde für Leerzeilen
+                COORD coord = { 0, (SHORT)y };
+                DWORD written;
+                std::string empty(screenCols, ' ');
+                empty[0] = '~';
+                WriteConsoleOutputCharacterA(hOut, empty.c_str(), (DWORD)screenCols, coord, &written);
+                FillConsoleOutputAttribute(hOut, attrNormal, (DWORD)screenCols, coord, &written);
+                // Tilde in Blau einfärben
+                COORD tc = { 0, (SHORT)y };
+                FillConsoleOutputAttribute(hOut, attrTilde, 1, tc, &written);
+            }
+        }
+
+        // ── Statusleiste ─────────────────────────────────────────────────────
         {
-            auto& key = rec.Event.KeyEvent;
-            char ch = key.uChar.AsciiChar;
+            std::string left = " " + (filename.empty() ? "[Neue Datei]" : filename);
+            if (dirty) left += " [*]";
+            std::string right = std::to_string(cy + 1) + ":" + std::to_string(cx + 1) + " ";
+            std::string mid = statusMsg;
+            statusMsg.clear();
 
-            if (key.wVirtualKeyCode == VK_ESCAPE)
-            { 
+            std::string status = left;
+            int pad = screenCols - (int)left.size() - (int)right.size();
+            if (pad > 0 && !mid.empty()) {
+                int mpad = (pad - (int)mid.size()) / 2 + (int)left.size();
+                while ((int)status.size() < mpad) status += ' ';
+                status += mid;
+            }
+            while ((int)status.size() < screenCols - (int)right.size()) status += ' ';
+            status += right;
+            writeLine(screenRows - 1, screenCols, status, attrStatus);
+        }
+
+        // ── Hilfezeile ───────────────────────────────────────────────────────
+        writeLine(screenRows, screenCols,
+            " ^S Speichern  ^Q Beenden  ^F Suchen  ^Z Rueckgaengig",
+            attrHelp);
+
+        // ── Cursor ───────────────────────────────────────────────────────────
+        int screenX = cx - coloff;
+        int screenY = cy - rowoff;
+        setCursorPos(screenX, screenY);
+        setCursorVisible(true);
+    }
+
+    // ─── Hauptschleife ───────────────────────────────────────────────────────
+    void run() {
+        getWindowSize(screenRows, screenCols);
+        screenRows -= 2;
+
+        clearScreen(screenRows + 2, screenCols);
+
+        while (true) {
+            render();
+            int k = readKey();
+            if (k == -1) continue; // Resize-Event, einfach neu rendern
+
+            switch (k) {
+            case KEY_CTRL_Q:
+                if (dirty) {
+                    std::string ans = promptInput("Aenderungen nicht gespeichert! Beenden? (j/n): ");
+                    if (ans != "j" && ans != "J") { setStatus("Abgebrochen."); break; }
+                }
+                clearScreen(screenRows + 2, screenCols);
+                setCursorPos(0, 0);
+                setCursorVisible(true);
+                exit(0);
+
+            case KEY_CTRL_S:    save();             break;
+            case KEY_CTRL_F:    search();           break;
+            case KEY_CTRL_Z:    undo();             break;
+            case KEY_ENTER:     insertNewline();    break;
+            case KEY_BACKSPACE: deleteChar();       break;
+            case KEY_DEL:       deleteCharForward(); break;
+
+            case KEY_ARROW_UP:
+            case KEY_ARROW_DOWN:
+            case KEY_ARROW_LEFT:
+            case KEY_ARROW_RIGHT:
+            case KEY_HOME:
+            case KEY_END:
+            case KEY_PAGE_UP:
+            case KEY_PAGE_DOWN:
+                moveCursor(k);
+                break;
+
+            default:
+                if (k >= 32 && k < 127) insertChar((char)k);
                 break;
             }
-            else if (key.wVirtualKeyCode == 'S' && key.dwControlKeyState & LEFT_CTRL_PRESSED)
-            {
-                save_file(filename);
-            }
-            else if (ch >= 32 && ch <= 126)
-            { // Printable
-                buffer[cur_y].insert(buffer[cur_y].begin() + cur_x, ch);
-                ++cur_x;
-            }
-            else if (key.wVirtualKeyCode == VK_BACK)
-            {
-                if (cur_x > 0)
-                {
-                    buffer[cur_y].erase(cur_x - 1, 1);
-                    --cur_x;
-                }
-                else if (cur_y > 0)
-                {
-                    cur_x = buffer[cur_y - 1].size();
-                    buffer[cur_y - 1] += buffer[cur_y];
-                    buffer.erase(buffer.begin() + cur_y);
-                    --cur_y;
-                }
-            }
-            else if (key.wVirtualKeyCode == VK_RETURN)
-            {
-                std::string rem = buffer[cur_y].substr(cur_x);
-                buffer[cur_y] = buffer[cur_y].substr(0, cur_x);
-                buffer.insert(buffer.begin() + cur_y + 1, rem);
-                ++cur_y;
-                cur_x = 0;
-            }
-            else if (key.wVirtualKeyCode == VK_LEFT && cur_x > 0)
-            {
-                cur_x--;
-            }
-            else if (key.wVirtualKeyCode == VK_RIGHT && cur_x < (int)buffer[cur_y].size())
-            {
-                cur_x++;
-            }
-            else if (key.wVirtualKeyCode == VK_UP && cur_y > 0) cur_y--;
-            else if (key.wVirtualKeyCode == VK_DOWN && cur_y + 1 < (int)buffer.size()) cur_y++;
-
-            draw_screen();
         }
     }
+};
 
-    // Clear screen beim Beenden
-    system("cls");
-    std::cout << "Datei gespeichert als " << filename << "\n";
+// ─── Einstiegspunkt ──────────────────────────────────────────────────────────
+
+int main(int argc, char* argv[]) {
+    setupConsole();
+    Editor ed;
+
+    if (argc >= 2) {
+        ed.open(argv[1]);
+        ed.setStatus("\"" + std::string(argv[1]) + "\" geladen.");
+    }
+    else {
+        ed.setStatus("Neue Datei -- Ctrl+S zum Speichern.");
+    }
+
+    ed.run();
+    return 0;
 }
