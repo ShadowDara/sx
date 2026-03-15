@@ -9,3 +9,5 @@ SX-UI/obj
 SX-UI/bin
 SX-UI/packages
 SX-UI/.vs/SX-UI.slnx
+*.pfx
+*.csproj.user
