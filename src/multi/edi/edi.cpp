@@ -31,32 +31,56 @@
 
  // ─── Handles & gespeicherter Konsolenzustand ─────────────────────────────────
 
-static HANDLE hOut = INVALID_HANDLE_VALUE;
+static HANDLE hOut = INVALID_HANDLE_VALUE; // unser eigener Screen-Buffer
+static HANDLE hOutOld = INVALID_HANDLE_VALUE; // originaler Buffer (zum Restore)
 static HANDLE hIn = INVALID_HANDLE_VALUE;
 static DWORD  origInMode = 0;
-static DWORD  origOutMode = 0;
 static CONSOLE_CURSOR_INFO origCursor;
 
 void restoreConsole() {
-    if (hIn != INVALID_HANDLE_VALUE) SetConsoleMode(hIn, origInMode);
-    if (hOut != INVALID_HANDLE_VALUE) {
-        SetConsoleMode(hOut, origOutMode);
-        SetConsoleCursorInfo(hOut, &origCursor);
+    if (hOutOld != INVALID_HANDLE_VALUE) {
+        // Originalen Buffer wieder aktiv schalten → alter Terminal-Inhalt kommt zurück
+        SetConsoleActiveScreenBuffer(hOutOld);
+        SetConsoleCursorInfo(hOutOld, &origCursor);
     }
+    if (hOut != INVALID_HANDLE_VALUE && hOut != hOutOld)
+        CloseHandle(hOut);
+    if (hIn != INVALID_HANDLE_VALUE)
+        SetConsoleMode(hIn, origInMode);
 }
 
 void setupConsole() {
-    hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     hIn = GetStdHandle(STD_INPUT_HANDLE);
+    hOutOld = GetStdHandle(STD_OUTPUT_HANDLE);
 
-    GetConsoleMode(hOut, &origOutMode);
     GetConsoleMode(hIn, &origInMode);
-    GetConsoleCursorInfo(hOut, &origCursor);
+    GetConsoleCursorInfo(hOutOld, &origCursor);
 
-    // Roheingabe: Events einzeln lesen, kein automatisches Echo
+    // Eigenen Screen-Buffer erstellen — komplett leer, kein alter Inhalt sichtbar
+    hOut = CreateConsoleScreenBuffer(
+        GENERIC_READ | GENERIC_WRITE,
+        FILE_SHARE_READ | FILE_SHARE_WRITE,
+        nullptr,
+        CONSOLE_TEXTMODE_BUFFER,
+        nullptr
+    );
+
+    // Diesen Buffer aktiv schalten → der alte Terminal-Output ist weg
+    SetConsoleActiveScreenBuffer(hOut);
+
+    // Puffergröße == Fenstergröße → kein Scrollbalken, kein hochscrollen möglich
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    if (GetConsoleScreenBufferInfo(hOut, &csbi)) {
+        int winCols = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+        int winRows = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+        SMALL_RECT win = { 0, 0, (SHORT)(winCols - 1), (SHORT)(winRows - 1) };
+        COORD      buf = { (SHORT)winCols, (SHORT)winRows };
+        SetConsoleWindowInfo(hOut, TRUE, &win);
+        SetConsoleScreenBufferSize(hOut, buf);
+    }
+
+    // Roheingabe
     SetConsoleMode(hIn, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
-
-    // Ausgabe: Standard (kein VT, kein ANSI — alles per API)
     SetConsoleMode(hOut, ENABLE_PROCESSED_OUTPUT);
 
     SetConsoleOutputCP(CP_ACP);
@@ -375,6 +399,11 @@ struct Editor {
         if (newRows != screenRows + 2 || newCols != screenCols) {
             screenRows = newRows - 2;
             screenCols = newCols;
+            // Puffergröße auf neue Fenstergröße anpassen
+            COORD      newBuf = { (SHORT)newCols, (SHORT)newRows };
+            SMALL_RECT win = { 0, 0, (SHORT)(newCols - 1), (SHORT)(newRows - 1) };
+            SetConsoleWindowInfo(hOut, TRUE, &win);
+            SetConsoleScreenBufferSize(hOut, newBuf);
         }
 
         scroll();
