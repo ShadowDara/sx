@@ -105,9 +105,28 @@ int main(int argc, char* argv[])
 	}
 
 	// View Current Folder
-	if (std::string(argv[1]) == "--viewfolder" || std::string(argv[1]) == "")
+	if (std::string(argv[1]) == "--viewfolder")
 	{
 		std::cout << fs::current_path() << std::endl;
 		return 0;
+	}
+
+	// Create a File
+	if (std::string(argv[1]) == "f")
+	{
+		if (argc > 2)
+		{
+			std::string filename = argv[2];
+			std::ofstream file{ filename };
+			if (!file) {
+				perror("Could not create file\n");
+				return 1;
+			}
+			std::cout << "File created: " << filename << std::endl;
+		}
+		else
+		{
+			std::cout << "Please provide a filename.\n";
+		}
 	}
 }

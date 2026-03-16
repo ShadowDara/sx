@@ -15,6 +15,7 @@ int printhelp()
 		<< " --loadtime, -l: Check the time it took to load the config file.\n"
 		<< " --foldersize, -f: Check the size of a folder.\n"
 		<< " --viewfolder: Display the Current Excution Folder in the Terminal\n"
+		<< " f: create a file\n"
 		<< "\n"
 		<< "Usage:\n"
 		<< " - Run the program and follow the instructions for the selected tool or game.\n"
