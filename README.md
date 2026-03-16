@@ -145,4 +145,13 @@ SX uses [KVP](https://github.com/ShadowDara/KeyValueParser)
 for the Config and Command System, which is a simple
 Key Value Pair System Libary written by me. Feel free to optimize is,
 if you want too.
-	
+
+<!--
+## Addons
+
+### Foldertool Batch
+
+A Batch Script to simply switch between different Folders in the
+Terminal which is powered by SX and the SX Config System. You can find
+it [here]()
+-->

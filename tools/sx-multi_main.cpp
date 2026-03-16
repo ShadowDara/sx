@@ -2,10 +2,14 @@
 
 #include <iostream>
 #include <charconv>
+#include <filesystem>
 
 #include "../src/sx-multi_config.hpp"
 #include "../src/sx-multi.hpp"
 #include "../sx_lib/sx_lib.hpp"
+
+
+namespace fs = std::filesystem;
 
 
 // Main function for the Multi Tool
@@ -97,6 +101,13 @@ int main(int argc, char* argv[])
 			path = argv[2];
 		}
 		foldersize(path);
+		return 0;
+	}
+
+	// View Current Folder
+	if (std::string(argv[1]) == "--viewfolder" || std::string(argv[1]) == "")
+	{
+		std::cout << fs::current_path() << std::endl;
 		return 0;
 	}
 }

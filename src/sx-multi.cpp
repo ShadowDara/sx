@@ -1,4 +1,4 @@
-#include "sx-multi.hpp"
+ï»¿#include "sx-multi.hpp"
 
 namespace fs = std::filesystem;
 
@@ -14,6 +14,7 @@ int printhelp()
 		<< " --numberguess, -n: A simple number guessing game.\n"
 		<< " --loadtime, -l: Check the time it took to load the config file.\n"
 		<< " --foldersize, -f: Check the size of a folder.\n"
+		<< " --viewfolder: Display the Current Excution Folder in the Terminal\n"
 		<< "\n"
 		<< "Usage:\n"
 		<< " - Run the program and follow the instructions for the selected tool or game.\n"
@@ -128,7 +129,7 @@ void foldersize(std::string path)
 	try
 	{
 		auto size = folder_size(path);
-		std::cout << "Ordnergröße: " << size << " Bytes\n";
+		std::cout << "OrdnergrÃ¶ÃŸe: " << size << " Bytes\n";
 	}
 	catch (const fs::filesystem_error& e)
 	{

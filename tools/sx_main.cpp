@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 
 	// Print View
 	// Iterate over the result and print the key-value pairs
-	if (std::string(argv[1]) == "--view" || std::string(argv[1]) == "-v")
+	if (std::string(argv[1]) == "--view" || std::string(argv[1]) == "-vi")
 	{
 		// Iterieren und ausgeben
 		for (const auto &pair : result)
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Print Version
-	if (std::string(argv[1]) == "--version" || std::string(argv[1]) == "-vi")
+	if (std::string(argv[1]) == "--version" || std::string(argv[1]) == "-v")
 	{
 		std::cout << Version "\n";
 		return 0;
