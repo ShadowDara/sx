@@ -19,7 +19,7 @@ void numberguess(int min, int max);
 void loadtime(bool useOtherConfig, const std::string& content);
 
 // Function to calculate the size of a folder
-std::uintmax_t folder_size(const fs::path& path);
+std::uintmax_t folder_size(const std::filesystem::path& path);
 
 // Function to check the size of a folder
 void foldersize(const std::string& path);

@@ -110,7 +110,7 @@ void loadtime(bool useOtherConfig, const std::string& content)
 
 #pragma region FolderSize
 
-static std::uintmax_t folder_size(const fs::path& path)
+std::uintmax_t folder_size(const fs::path& path)
 {
 	std::uintmax_t size = 0;
 
