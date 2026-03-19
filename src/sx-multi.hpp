@@ -10,7 +10,7 @@
 
 
 // Function to print the help message for the Multi Tool
-int printhelp();
+int printhelp_multi();
 
 // Function to run the number guessing game
 void numberguess(int min, int max);

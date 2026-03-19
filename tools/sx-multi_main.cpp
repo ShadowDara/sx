@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 	// Print Help if requested
 	if (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")
 	{
-		return printhelp();
+		return printhelp_multi();
 	}
 
 	// Check if the numberguess game should be started

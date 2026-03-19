@@ -5,7 +5,7 @@ namespace fs = std::filesystem;
 #pragma region Help
 
 // Function to print the help message for the Multi Tool
-int printhelp()
+int printhelp_multi()
 {
 	std::cout 
 		<< "This is the Multi Tool. It is a collection of small tools and games.\n"
