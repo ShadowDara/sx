@@ -13,7 +13,7 @@ std::unordered_map<std::string, std::string> loadConfig()
 	// Load KVP File
 	std::ifstream file{ homeDir + "/sx.conf" };
 	if (!file) {
-		perror("Could not open Config File\n");
+		std::cerr << RED "Could not open Config File" END << std::endl;
 		return {};
 	}
 

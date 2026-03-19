@@ -10,11 +10,14 @@ build:
 
 run:
 	$(MAKE) build
-	./sx
+	.build/sx
 
 install:
 	$(MAKE) build
-	mv sx /usr/local/bin/sx
+	mv build/sx /usr/local/bin/sx
+	mv build/sx-multi /usr/local/bin/sx-multi
 
 clean:
 	rm -rf build
+
+.PHONY: dbuild build run install clean

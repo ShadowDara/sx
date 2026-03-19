@@ -14,6 +14,9 @@ if (MSVC)
   add_compile_options(/utf-8)
 endif()
 
+# Link Time Optimization (LTO) aktivieren für Release-Builds
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
+
 # Shortcuter Executable
 project ("sx")
 
