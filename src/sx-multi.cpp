@@ -15,7 +15,9 @@ int printhelp()
 		<< " --loadtime, -l: Check the time it took to load the config file.\n"
 		<< " --foldersize, -f: Check the size of a folder.\n"
 		<< " --viewfolder: Display the Current Excution Folder in the Terminal\n"
-		<< " f: create a file\n"
+		<< " --file, f: create a file\n"
+		<< " viewempty: view every empty folder from a startpath\n"
+		<< " rmempty: remove empty Folders\n"
 		<< "\n"
 		<< "Usage:\n"
 		<< " - Run the program and follow the instructions for the selected tool or game.\n"
@@ -70,7 +72,7 @@ void numberguess(int min, int max)
 #pragma region LoadTime
 
 // Function to check the Time it took to load the config file
-void loadtime(bool useOtherConfig, std::string content)
+void loadtime(bool useOtherConfig, const std::string& content)
 {
 	if (useOtherConfig)
 	{
@@ -108,7 +110,7 @@ void loadtime(bool useOtherConfig, std::string content)
 
 #pragma region FolderSize
 
-std::uintmax_t folder_size(const fs::path& path)
+static std::uintmax_t folder_size(const fs::path& path)
 {
 	std::uintmax_t size = 0;
 
@@ -125,7 +127,7 @@ std::uintmax_t folder_size(const fs::path& path)
 
 
 // Function to check the size of a folder
-void foldersize(std::string path)
+void foldersize(const std::string& path)
 {
 	try
 	{
@@ -139,3 +141,29 @@ void foldersize(std::string path)
 }
 
 #pragma endregion
+
+// Function to view every empty Folder
+void remove_empty_dirs(const fs::path& dir, bool dry_run) {
+	std::error_code ec;
+
+	for (const auto& entry : fs::directory_iterator(dir, ec)) {
+		if (entry.is_directory(ec) && !ec) {
+			remove_empty_dirs(entry.path(), dry_run);
+		}
+	}
+
+	// Nach den Unterordnern prüfen (bottom-up)
+	if (fs::is_empty(dir, ec) && !ec) {
+		if (dry_run) {
+			std::cout << "[DRY] Würde löschen: " << dir << '\n';
+		}
+		else {
+			std::cout << "Lösche: " << dir << '\n';
+			fs::remove(dir, ec);
+
+			if (ec) {
+				std::cerr << "Fehler beim Löschen: " << ec.message() << '\n';
+			}
+		}
+	}
+}

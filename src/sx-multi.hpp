@@ -16,7 +16,13 @@ int printhelp();
 void numberguess(int min, int max);
 
 // Function to check the Time it took to load the config file
-void loadtime(bool useOtherConfig, std::string content);
+void loadtime(bool useOtherConfig, const std::string& content);
+
+// Function to calculate the size of a folder
+std::uintmax_t folder_size(const fs::path& path);
 
 // Function to check the size of a folder
-void foldersize(std::string path);
+void foldersize(const std::string& path);
+
+// Function to view every empty folder
+void remove_empty_dirs(const std::filesystem::path& dir, bool dry_run);

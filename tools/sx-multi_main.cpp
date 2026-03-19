@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 	// Check if Argumentsare here
 	if (argc < 2)
 	{
-		std::cout << "Please run with at least one argument or --help or -h.\n";
+		std::cout << RED "Please run with at least one argument or --help or -h." END "\n";
 		return 1;
 	}
 
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
 	}
 
 	// Create a File
-	if (std::string(argv[1]) == "f")
+	if (std::string(argv[1]) == "f" || std::string(argv[1]) == "--file")
 	{
 		if (argc > 2)
 		{
@@ -123,10 +123,59 @@ int main(int argc, char* argv[])
 				return 1;
 			}
 			std::cout << "File created: " << filename << std::endl;
+			return 0;
 		}
 		else
 		{
-			std::cout << "Please provide a filename.\n";
+			std::cerr << "Please provide a filename.\n";
 		}
 	}
+
+	// View / delete empty Folders
+	if (std::string(argv[1]) == "viewempty")
+	{
+		if (argc > 2)
+		{
+			remove_empty_dirs(argv[2], true);
+			return 0;
+		}
+		else
+		{
+			std::cerr << "Please Provide a start path as the 2nd Argument!\n";
+		}
+	}
+
+	// Delete Empty
+	if (std::string(argv[1]) == "rmempty")
+	{
+		if (argc > 2)
+		{
+			remove_empty_dirs(argv[2], false);
+			return 0;
+		}
+		else
+		{
+			std::cerr << "Please Provide a start path as the 2nd Argument!\n";
+		}
+	}
+
+	// find greatest folders
+	if (std::string(argv[1]) == "findgreatest")
+	{
+		if (argc <= 2)
+		{
+			std::cerr << "Please provide a second Argument for the Start Dir";
+		}
+
+		for (auto& entry : fs::directory_iterator(argv[2])) {
+			if (fs::is_directory(entry.path())) {
+				uintmax_t size = folder_size(entry.path());
+
+				std::cout << entry.path() << " -> "
+					<< (size / (1024 * 1024)) << " MB\n";
+			}
+		}
+	}
+
+	return 1;
 }

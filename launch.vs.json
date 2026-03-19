@@ -67,12 +67,33 @@
     },
     {
       "type": "default",
+      "name": "Current Path",
+      "project": "CMakeLists.txt",
+      "projectTarget": "sx-multi.exe",
+      "args": [
+        "--viewfolder"
+      ],
+      "currentDir": "${workspaceRoot}"
+    },
+    {
+      "type": "default",
       "name": "Foldersize",
       "project": "CMakeLists.txt",
       "projectTarget": "sx-multi.exe",
       "args": [
         "--foldersize"
       ]
+    },
+    {
+      "type": "default",
+      "name": "View Empty Folder",
+      "project": "CMakeLists.txt",
+      "projectTarget": "sx-multi.exe",
+      "args": [
+        "viewempty",
+        "."
+      ],
+      "currentDir": "${workspaceRoot}"
     }
   ],
   "defaults": {},
