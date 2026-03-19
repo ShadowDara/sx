@@ -12,3 +12,5 @@ SX-UI/.vs/SX-UI.slnx
 *.pfx
 *.csproj.user
 *.TMP
+build
+rbuild
