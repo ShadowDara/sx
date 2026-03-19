@@ -15,3 +15,6 @@ run:
 install:
 	$(MAKE) build
 	mv sx /usr/local/bin/sx
+
+clean:
+	rm -rf build
