@@ -63,7 +63,7 @@ int runCommand(
          fullCommand = linuxterminal + " -e \"" + command + "\"";
      }
 
-    fullCommand = command
+     fullCommand = command;
 
 #endif
 
