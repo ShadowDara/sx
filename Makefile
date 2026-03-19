@@ -1,14 +1,12 @@
 # Makefile for Shortcuter
 
 dbuild:
-	g++ -O0 -g -std=c++20 -march=native -flto tools/sx_main.cpp src/*.cpp sx_lib/*.cpp -o sx
-	g++ -O0 -g -std=c++20 -march=native -flto tools/sx-multi_main.cpp src/*.cpp sx_lib/*.cpp -o multi
-	g++ -O0 -g -std=c++20 -march=native -flto tools/test.cpp src/*.cpp sx_lib/*.cpp -o test
+	cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+	cmake --build build
 
 build:
-	g++ -O3 -std=c++20 -march=native -flto tools/sx_main.cpp src/*.cpp sx_lib/*.cpp -o sx
-	g++ -O3 -std=c++20 -march=native -flto tools/sx-multi_main.cpp src/*.cpp sx_lib/*.cpp -o multi
-	g++ -O3 -std=c++20 -march=native -flto tools/test.cpp src/*.cpp sx_lib/*.cpp -o test
+	cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+	cmake --build build
 
 run:
 	$(MAKE) build
