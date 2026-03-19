@@ -13,6 +13,7 @@ run:
 	.build/sx
 
 install:
+	echo Sudo required here
 	$(MAKE) build
 	mv build/sx /usr/local/bin/sx
 	mv build/sx-multi /usr/local/bin/sx-multi
