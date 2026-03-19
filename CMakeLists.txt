@@ -7,12 +7,11 @@ cmake_minimum_required (VERSION 3.10)
 if (POLICY CMP0141)
   cmake_policy(SET CMP0141 NEW)
   set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
+  add_compile_options(/utf-8)
 endif()
 
 # Shortcuter Executable
 project ("sx")
-
-add_compile_options(/utf-8)
 
 # Fügen Sie der ausführbaren Datei dieses Projekts eine Quelle hinzu.
 add_executable (sx
@@ -30,8 +29,6 @@ endif()
 # MultiTool Executable
 project("sx-multi")
 
-add_compile_options(/utf-8)
-
 add_executable(sx-multi
 	"tools/sx-multi_main.cpp"
 	"src/sx-multi.cpp"
@@ -45,8 +42,6 @@ endif()
 
 # Test Project
 project("test")
-
-add_compile_options(/utf-8)
 
 add_executable(test
 	"tools/test.cpp"
