@@ -54,7 +54,7 @@ int runCommand(
 
 #else
 
-     if (terminal.empty())
+     if (linuxterminal.empty())
      {
          fullCommand = command;
      }
