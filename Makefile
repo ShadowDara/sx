@@ -9,7 +9,7 @@ build:
 	cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 	cmake --build build
 	echo Moving to Release Dir
-	mkdir rbuild
+	mkdir -p rbuild
 	cp build/sx rbuild/sx
 	cp build/sx-multi rbuild/sx-multi
 	cp build/test rbuild/test
