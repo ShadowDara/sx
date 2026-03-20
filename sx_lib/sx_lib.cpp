@@ -48,3 +48,25 @@ std::string SXLibConfig::getSetting(const std::string& key,
 	}
 	return "";
 }
+
+
+// Function to check a Boolean Entry from the Config
+bool checkBoolEntry(const std::unordered_map<std::string, std::string>& result,
+	const std::string& name)
+{
+	// Check for Standard print overwriting
+	auto it = result.find(name);
+	if (it == result.end())
+	{
+		return false;
+	}
+
+	// Set in the Config to true
+	std::string OverrwriteStartMessage = it->second;
+	if (OverrwriteStartMessage == "true")
+	{
+		return true;
+	}
+
+	return false;
+}

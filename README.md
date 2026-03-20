@@ -31,6 +31,14 @@ All SX Settings:
 # Echo Commands before running them, true or false - Default is false
 --echo-commands=false
 
+# Enable Local Commands
+# Option to enable local Command SX files in the current dir which will
+# then be loaded
+--enable-local-commands=false
+# To decide if the Local or Global Commands should be used
+# Default it true
+--override-local-commands=true
+
 # Option to change the Default Start Message to for example
 # Set to true for this!
 --overwrite-start-message=false

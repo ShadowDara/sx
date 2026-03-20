@@ -10,7 +10,7 @@
 
 #include "KVP_single_header.hpp"
 #include "ansicolors.hpp"
-#include "../src/sx_oscore.hpp"
+#include "sx_lib_oscore.hpp"
 
 #include <string>
 #include <vector>
@@ -35,3 +35,8 @@ struct SXLibConfig {
 
 	SXLibConfig(const std::string& name) : programName(name) {}
 };
+
+
+// Function to check a Boolean Entry from the Config
+bool checkBoolEntry(const std::unordered_map<std::string, std::string>& result,
+	const std::string& name);

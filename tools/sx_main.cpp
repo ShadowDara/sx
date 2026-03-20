@@ -1,14 +1,15 @@
 ﻿// Shortcuter.cpp: Definiert den Einstiegspunkt für die Anwendung.
 //
 
-#include "../src/sx_oscore.hpp"
+#include "../sx_lib/sx_lib_oscore.hpp"
+#include "../sx_lib/sx_lib.hpp"
 
 #include <iostream>
 #include <string>
 
 // Include the Shortcuter Header File
-#include "../src/sx.hpp"
-#include "../src/sx_config.hpp"
+#include "../sx/sx.hpp"
+#include "../sx/sx_config.hpp"
 
 
 // Main function for Shortcuter
@@ -21,11 +22,11 @@ int main(int argc, char *argv[])
 	Config config;
 
 	// Load the Shortcuts
-	std::string content = loadConfig();
-	// Parse KVP File
-	auto result = KeyValueParser::parse_kvp2(content);
+	auto result = loadConfig();
 
-	config.NewStartMessage = checkNewStartMessage(result);
+	config.NewStartMessage = checkBoolEntry(result, "--overwrite-start-message");
+	config.EnableLocalCommands = checkBoolEntry(result, "--enable-local-commands");
+	config.OverrideLocalCommands = checkBoolEntry(result, "--override-local-commands");
 
 	// Check if Argumentsare here
 	if (argc < 2)

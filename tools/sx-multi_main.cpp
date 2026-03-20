@@ -4,8 +4,8 @@
 #include <charconv>
 #include <filesystem>
 
-#include "../src/sx-multi_config.hpp"
-#include "../src/sx-multi.hpp"
+#include "../sx-multi/sx-multi_config.hpp"
+#include "../sx-multi/sx-multi.hpp"
 #include "../sx_lib/sx_lib.hpp"
 
 

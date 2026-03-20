@@ -1,6 +1,3 @@
-#define KVP_IMPLEMENTATION
-#include "../sx_lib/KVP_single_header.hpp"
-
 #include "sx.hpp"
 
 
@@ -45,26 +42,6 @@ int printinfo()
 {
 	std::cout << "SX by Shadowdara Version " << Version << " Built at " << BuildTime << "\n";
 	return 0;
-}
-
-
-// Function to load the configuration file and
-// return its content as a string
-std::string loadConfig()
-{
-	// Get Home Directory
-	auto homeDir = getHomeDirectory();
-	// Load KVP File
-	std::ifstream file{ homeDir + "/sx.conf" };
-	if (!file) {
-		std::cerr << RED "Could not open Config File" END << std::endl;
-		return "";
-	}
-	std::string content(
-		(std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>()
-	);
-
-	return content;
 }
 
 
@@ -114,28 +91,6 @@ int runShortcut(int argc, char* argv[],
 	//printf("Command returned with code %d\n", returncode);
 
 	return returncode;
-}
-
-
-// Function to check if the Defaul Message with no arguments go
-// Overwritten
-bool checkNewStartMessage(std::unordered_map<std::string, std::string>& result)
-{
-	// Check for Standard print overwriting
-	auto it = result.find("--overwrite-start-message");
-	if (it == result.end())
-	{
-		return false;
-	}
-
-	// Set in the Config to true
-	std::string OverrwriteStartMessage = it->second;
-	if (OverrwriteStartMessage == "true")
-	{
-		return true;
-	}
-
-	return false;
 }
 
 
