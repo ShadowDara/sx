@@ -1,6 +1,3 @@
-#define KVP_IMPLEMENTATION
-#include "KVP_single_header.hpp"
-
 #include "sx_lib.hpp"
 
 

@@ -1,8 +1,8 @@
 ﻿// Shortcuter.cpp: Definiert den Einstiegspunkt für die Anwendung.
 //
 
-#include "../sx_lib/sx_lib_oscore.hpp"
-#include "../sx_lib/sx_lib.hpp"
+#include <sx_lib/sx_lib_oscore.hpp>
+#include "sx_lib/sx_lib.hpp"
 
 #include <iostream>
 #include <string>
