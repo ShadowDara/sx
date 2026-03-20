@@ -138,7 +138,7 @@ namespace SX_UI
                 buttonWindowFlags[button] = useWindow;
             }
 
-            label1.Text = $"Loaded all at {DateTime.Now:HH:mm:ss}";
+            label1.Text = $"Finished loading all at {DateTime.Now:HH:mm:ss}!";
         }
 
 
