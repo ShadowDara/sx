@@ -4,6 +4,8 @@
 #include <sx_lib/sx_lib_oscore.hpp>
 #include "sx_lib/sx_lib.hpp"
 
+#include <kvp/kvp2.hpp>
+
 #include <iostream>
 #include <string>
 
@@ -26,7 +28,21 @@ int main(int argc, char *argv[])
 
 	config.NewStartMessage = checkBoolEntry(result, "--overwrite-start-message");
 	config.EnableLocalCommands = checkBoolEntry(result, "--enable-local-commands");
-	config.OverrideLocalCommands = checkBoolEntry(result, "--override-local-commands");
+	config.OverrideGlobalCommands = checkBoolEntry(result, "--override-global-commands");
+
+	// Check if Local Commands are enable
+	if (config.EnableLocalCommands == true)
+	{
+		auto localConfig = loadLocalConfig();
+		if (config.OverrideGlobalCommands == true)
+		{
+			merge_maps(result, localConfig);
+		}
+		else
+		{
+			merge_maps(localConfig, result);
+		}
+	}
 
 	// Check if Argumentsare here
 	if (argc < 2)

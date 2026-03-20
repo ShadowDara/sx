@@ -11,7 +11,7 @@ struct Config {
     // To enable local Commands in every Directory
     bool EnableLocalCommands = false;
     // To decide which Commands should be overwritten
-    bool OverrideLocalCommands = true;
+    bool OverrideGlobalCommands = true;
 };
 
 // Version and ca Buildtime

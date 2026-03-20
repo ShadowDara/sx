@@ -36,8 +36,8 @@ All SX Settings:
 # then be loaded
 --enable-local-commands=false
 # To decide if the Local or Global Commands should be used
-# Default it true
---override-local-commands=true
+# Default it false
+--override-global-commands=false
 
 # Option to change the Default Start Message to for example
 # Set to true for this!

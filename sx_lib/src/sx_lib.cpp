@@ -74,6 +74,7 @@ std::string SXLibConfig::getSetting(const std::string& key,
 	{
 		return val.value_or("");
 	}
+	return "";
 }
 
 

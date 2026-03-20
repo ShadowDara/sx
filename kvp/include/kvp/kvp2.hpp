@@ -91,97 +91,107 @@ namespace KeyValueParser2 {
     }
 
 
-    // --- Writer functions operating on store ---
+    // Function to merge 2 Maps together
+    // the 2nd Map will overright the first one when entries are already existing
     template <typename StoreType = std::unordered_map<std::string, std::string>>
-    void append_entry(StoreType& store, const std::string& key, const std::string& value)
+    void merge_maps(StoreType& target, const StoreType& other)
     {
-        if (!store.contains(key)) {
-            store.set(key, value);
-        }
-        else {
-            std::cerr << "Entry already exists!: " << key << " Value: " << value << "\n";
-        }
+        for (const auto& [key, value] : other.get_data())
+            target.set(key, value); // überschreibt automatisch
     }
+}
 
 
-    template <typename StoreType = std::unordered_map<std::string, std::string>>
-    void overwrite_entry(StoreType& store, const std::string& key, const std::string& value)
-    {
-        if (store.contains(key)) {
-            store.set(key, value);
-        }
-        else {
-            std::cerr << "Entry does not exist!: " << key << "\n";
-        }
+// --- Writer functions operating on store ---
+template <typename StoreType = std::unordered_map<std::string, std::string>>
+void append_entry(StoreType& store, const std::string& key, const std::string& value)
+{
+    if (!store.contains(key)) {
+        store.set(key, value);
     }
-
-
-    template <typename StoreType = std::unordered_map<std::string, std::string>>
-    void delete_entry(StoreType& store, const std::string& key)
-    {
-        if (store.contains(key)) {
-            store.erase(key);
-        }
-        else {
-            std::cerr << "Entry does not exist!: " << key << "\n";
-        }
+    else {
+        std::cerr << "Entry already exists!: " << key << " Value: " << value << "\n";
     }
+}
 
 
-    // --- Writer functions operating on strings ---
-    inline std::string append_entry(const std::string& key, const std::string& value, const std::string& input) {
-        return input + "\n" + key + "=" + value;
+template <typename StoreType = std::unordered_map<std::string, std::string>>
+void overwrite_entry(StoreType& store, const std::string& key, const std::string& value)
+{
+    if (store.contains(key)) {
+        store.set(key, value);
     }
+    else {
+        std::cerr << "Entry does not exist!: " << key << "\n";
+    }
+}
 
 
-    inline std::string overwrite_entry(const std::string& key, const std::string& value, const std::string& input) {
-        std::stringstream ss(input);
-        std::string line;
-        std::string output;
-        bool replaced = false;
+template <typename StoreType = std::unordered_map<std::string, std::string>>
+void delete_entry(StoreType& store, const std::string& key)
+{
+    if (store.contains(key)) {
+        store.erase(key);
+    }
+    else {
+        std::cerr << "Entry does not exist!: " << key << "\n";
+    }
+}
 
-        while (std::getline(ss, line)) {
-            if (line.empty() || line.starts_with('#')) {
-                output += line + "\n";
-                continue;
-            }
 
-            std::size_t pos = line.find('=');
-            if (pos != std::string::npos) {
-                std::string cur_key = line.substr(0, pos);
-                if (cur_key == key) {
-                    line = key + "=" + value;
-                    replaced = true;
-                }
-            }
+// --- Writer functions operating on strings ---
+inline std::string append_entry(const std::string& key, const std::string& value, const std::string& input) {
+    return input + "\n" + key + "=" + value;
+}
+
+
+inline std::string overwrite_entry(const std::string& key, const std::string& value, const std::string& input) {
+    std::stringstream ss(input);
+    std::string line;
+    std::string output;
+    bool replaced = false;
+
+    while (std::getline(ss, line)) {
+        if (line.empty() || line.starts_with('#')) {
             output += line + "\n";
+            continue;
         }
 
-        if (!replaced) output += key + "=" + value + "\n";
-        return output;
+        std::size_t pos = line.find('=');
+        if (pos != std::string::npos) {
+            std::string cur_key = line.substr(0, pos);
+            if (cur_key == key) {
+                line = key + "=" + value;
+                replaced = true;
+            }
+        }
+        output += line + "\n";
     }
 
+    if (!replaced) output += key + "=" + value + "\n";
+    return output;
+}
 
-    inline std::string delete_entry(const std::string& key, const std::string& input) {
-        std::stringstream ss(input);
-        std::string line;
-        std::string output;
 
-        while (std::getline(ss, line)) {
-            if (line.empty() || line.starts_with('#')) {
-                output += line + "\n";
-                continue;
-            }
+inline std::string delete_entry(const std::string& key, const std::string& input) {
+    std::stringstream ss(input);
+    std::string line;
+    std::string output;
 
-            std::size_t pos = line.find('=');
-            if (pos != std::string::npos) {
-                std::string cur_key = line.substr(0, pos);
-                if (cur_key == key) continue;
-            }
+    while (std::getline(ss, line)) {
+        if (line.empty() || line.starts_with('#')) {
             output += line + "\n";
+            continue;
         }
 
-        return output;
+        std::size_t pos = line.find('=');
+        if (pos != std::string::npos) {
+            std::string cur_key = line.substr(0, pos);
+            if (cur_key == key) continue;
+        }
+        output += line + "\n";
     }
+
+    return output;
 
 } // namespace KeyValueParser
