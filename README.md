@@ -66,6 +66,14 @@ Here are some Example Configs for SX
 - [Full Config](/example_sx.conf)
 
 
+## Info
+
+SX uses [KVP](https://github.com/ShadowDara/KeyValueParser)
+for the Config and Command System, which is a simple
+Key Value Pair System Libary written by me. Feel free to optimize is,
+if you want too.
+
+
 ## Multi
 
 SX although has a multi Tools with a lot of options which can be called via SX,
@@ -157,13 +165,6 @@ and set the Command you want to call on Button Click
 SX must be in Path to use the UI, because the UI is a Wrapper
 for SX and calls the Commands via SX
 
-
-## Info
-
-SX uses [KVP](https://github.com/ShadowDara/KeyValueParser)
-for the Config and Command System, which is a simple
-Key Value Pair System Libary written by me. Feel free to optimize is,
-if you want too.
 
 <!--
 ## Addons

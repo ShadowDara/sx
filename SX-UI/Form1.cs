@@ -127,6 +127,7 @@ namespace SX_UI
                 {
                     // Erwartet "true" oder "false"
                     bool.TryParse(result.Trim(), out useWindow);
+                    useWindow = !useWindow;
                 }
 
                 buttonWindowFlags[button] = useWindow;
@@ -141,9 +142,9 @@ namespace SX_UI
             {
                 FileName = "sx",
                 Arguments = argument,
-                UseShellExecute = useWindow,
-                CreateNoWindow = !useWindow,
-                WindowStyle = useWindow ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden
+                UseShellExecute = !useWindow,
+                CreateNoWindow = useWindow,
+                WindowStyle = useWindow ? ProcessWindowStyle.Hidden : ProcessWindowStyle.Normal
             };
 
             Process.Start(psi);
