@@ -4,6 +4,12 @@
 using namespace KeyValueParser2;
 
 
+// for the unordered Map
+// to change it easily here
+using MAP = std::unordered_map<std::string, std::string>;
+using KVPMAP = KeyValueParser2::KeyValueStore<MAP>;
+
+
 // Function to print the help message
 int printhelp()
 {
@@ -50,7 +56,7 @@ int printinfo()
 
 // Function to run the shortcut command
 int runShortcut(int argc, char* argv[],
-	KeyValueStore<>& result)
+	KVPMAP& result)
 {
 	// Check if shortcut exists
 	auto val = result.get(argv[1]);
@@ -94,7 +100,7 @@ int runShortcut(int argc, char* argv[],
 // while be first searched for the file path from the hash map and then
 // the File path will be loaded, and file content will be written to the
 // Terminal
-void printNewStartMessage(KeyValueStore<>& result)
+void printNewStartMessage(KVPMAP& result)
 {
 	auto val = result.get("--start-message-file");
 	if (!val)

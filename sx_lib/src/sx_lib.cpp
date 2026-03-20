@@ -4,8 +4,14 @@
 using namespace KeyValueParser2;
 
 
+// for the unordered Map
+// to change it easily here
+using MAP = std::unordered_map<std::string, std::string>;
+using KVPMAP = KeyValueParser2::KeyValueStore<MAP>;
+
+
 // Load the Config File and return a Map with the Settings
-KeyValueStore<> loadConfig()
+KVPMAP loadConfig()
 {
 	// Get Home Directory
 	auto homeDir = getHomeDirectory();
@@ -28,7 +34,7 @@ KeyValueStore<> loadConfig()
 
 
 // Function to load the LocalConfig
-KeyValueStore<> loadLocalConfig()
+KVPMAP loadLocalConfig()
 {
 	// Get Home Directory
 	std::string homeDir = std::filesystem::current_path().string();
@@ -52,7 +58,7 @@ KeyValueStore<> loadLocalConfig()
 
 // Load the Config File and return a Map with the Settings from
 // the Argument given
-KeyValueStore<> loadConfigfromString(std::string arg)
+KVPMAP loadConfigfromString(std::string arg)
 {
 	auto store = parse_kvp2(arg);
 
@@ -62,7 +68,7 @@ KeyValueStore<> loadConfigfromString(std::string arg)
 
 // Load the Config and return the value for the given key
 std::string SXLibConfig::getSetting(const std::string& key,
-	KeyValueStore<> settings)
+	KVPMAP settings)
 {
 	if (auto val = settings.get("--" + programName + "-" + key))
 	{
@@ -72,7 +78,7 @@ std::string SXLibConfig::getSetting(const std::string& key,
 
 
 // Function to check a Boolean Entry from the Config
-bool checkBoolEntry(const KeyValueStore<>& result,
+bool checkBoolEntry(const KVPMAP& result,
 	const std::string& name)
 {
 	// Check for Standard print overwriting
@@ -90,7 +96,7 @@ bool checkBoolEntry(const KeyValueStore<>& result,
 
 // Function to check an Integer Entry from the Config
 // Default return is Zero when a problems occures
-int checkIntEntry(const KeyValueStore<>& result,
+int checkIntEntry(const KVPMAP& result,
 	const std::string& name)
 {
 	// Check for Standard print overwriting
