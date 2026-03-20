@@ -19,6 +19,7 @@ namespace SX_UI
         // For Terminal for the Buttons
         private Dictionary<Button, bool> buttonWindowFlags = new Dictionary<Button, bool>();
 
+
         // Function to run a command and return its output
         private static async Task<string> RunCommandAsync(string command, string[] args)
         {
@@ -58,13 +59,17 @@ namespace SX_UI
             }
         }
 
+
         public Form1()
         {
             InitializeComponent();
         }
 
+
         private async void Form1_Load(object sender, EventArgs e)
         {
+            label1.Text = "Loading ...";
+
             // Array der Buttons und ihrer Argumente
             var buttons = new (Button button, string arg)[]
             {
@@ -132,7 +137,10 @@ namespace SX_UI
 
                 buttonWindowFlags[button] = useWindow;
             }
+
+            label1.Text = $"Loaded all at {DateTime.Now:HH:mm:ss}";
         }
+
 
         private void HandleButtonClick(Button button, string argument)
         {
@@ -149,6 +157,7 @@ namespace SX_UI
 
             Process.Start(psi);
         }
+
 
         private void button1_Click(object sender, EventArgs e)
         {
@@ -228,6 +237,21 @@ namespace SX_UI
         private void button16_Click(object sender, EventArgs e)
         {
             HandleButtonClick(button1, "--windows-sx-ui-button16");
+        }
+
+        // Open Link for the Project
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://github.com/shadowdara/sx",
+                UseShellExecute = true
+            });
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
