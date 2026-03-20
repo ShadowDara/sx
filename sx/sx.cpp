@@ -1,6 +1,9 @@
 #include "sx.hpp"
 
 
+using namespace KeyValueParser2;
+
+
 // Function to print the help message
 int printhelp()
 {
@@ -47,31 +50,24 @@ int printinfo()
 
 // Function to run the shortcut command
 int runShortcut(int argc, char* argv[],
-	std::unordered_map<std::string, std::string>& result)
+	KeyValueStore<>& result)
 {
 	// Check if shortcut exists
-	auto it = result.find(argv[1]);
-	if (it == result.end())
+	auto val = result.get(argv[1]);
+	if (!val)
 	{
 		std::cout << "Shortcut not found: " << argv[1] << "\n";
 		return 1;
 	}
-
+	
 	// Base command from config
-	std::string command = it->second;
+	std::string command = *val;
 
-	// Check for echo the Command
-	auto it2 = result.find("--echo-commands");
-	if (it2 == result.end())
+	auto val2 = result.get("--echo-commands");
+
+	if (*val2 == "true")
 	{
-		// DO NOTHING
-	}
-	else
-	{
-		if (it2->second == "true")
-		{
-			std::cout << command << "\n";
-		}
+		std::cout << command << "\n";
 	}
 
 	// Append additional arguments
@@ -84,8 +80,8 @@ int runShortcut(int argc, char* argv[],
 	// Execute
 	auto returncode = runCommand(
 		command,
-		result["--windows-default-shell"],
-		result["--linux-default-shell"]
+		result.get("--windows-default-shell").value_or(""),
+		result.get("--linux-default-shell").value_or("")
 	);
 
 	//printf("Command returned with code %d\n", returncode);
@@ -98,16 +94,16 @@ int runShortcut(int argc, char* argv[],
 // while be first searched for the file path from the hash map and then
 // the File path will be loaded, and file content will be written to the
 // Terminal
-void printNewStartMessage(std::unordered_map<std::string, std::string>& result)
+void printNewStartMessage(KeyValueStore<>& result)
 {
-	auto it = result.find("--start-message-file");
-	if (it == result.end())
+	auto val = result.get("--start-message-file");
+	if (!val)
 	{
 		std::cout << "Start Message File Entry not found!\n";
 		return;
 	}
 
-	std::string NewStartMessageFile = it->second;
+	std::string NewStartMessageFile = *val;
 
 	std::ifstream file(getHomeDirectory() + "/" + NewStartMessageFile); // Datei öffnen
 
@@ -122,38 +118,38 @@ void printNewStartMessage(std::unordered_map<std::string, std::string>& result)
 	std::string color = WHITE;
 
 	// Get the Color
-	auto it3 = result.find("--start-message-color");
-	if (it3 == result.end())
+	auto it3 = result.get("--start-message-color");
+	if (!it3)
 	{
 		
 	}
 	else
 	{
-		if (it3->second == "Black")
+		if (*it3 == "Black")
 		{
 			color = BLACK;
 		}
-		else if (it3->second == "Red")
+		else if (*it3 == "Red")
 		{
 			color = RED;
 		}
-		else if (it3->second == "Green")
+		else if (*it3 == "Green")
 		{
 			color = GREEN;
 		}
-		else if (it3->second == "Yellow")
+		else if (*it3 == "Yellow")
 		{
 			color = YELLOW;
 		}
-		else if (it3->second == "Blue")
+		else if (*it3 == "Blue")
 		{
 			color = BLUE;
 		}
-		else if (it3->second == "Purple")
+		else if (*it3 == "Purple")
 		{
 			color = PURPLE;
 		}
-		else if (it3->second == "Cyan")
+		else if (*it3 == "Cyan")
 		{
 			color = CYAN;
 		}
@@ -170,13 +166,13 @@ void printNewStartMessage(std::unordered_map<std::string, std::string>& result)
 
     file.close(); // optional, da Destruktor automatisch schließt
 
-	auto it2 = result.find("--add-info-to-start-message");
-	if (it2 == result.end())
+	auto it2 = result.get("--add-info-to-start-message");
+	if (!it2)
 	{
 		return;
 	}
 
-	if (it2->second == "true")
+	if (*it2 == "true")
 	{
 		std::cout << GREEN "SX Version " Version " - BuildTime " BuildTime END"\n";
 	}

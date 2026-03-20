@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <kvp/kvp.hpp>
+#include <kvp/kvp2.hpp>
 
 #include <sx_lib/sx_lib_oscore.hpp>
 
@@ -17,14 +17,18 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <filesystem>
 
 
 // Function to load the Config File and return a Map with the Settings
-std::unordered_map<std::string, std::string> loadConfig();
+KeyValueParser2::KeyValueStore<> loadConfig();
+
+// Function to load the LocalConfig
+KeyValueParser2::KeyValueStore<> loadLocalConfig();
 
 // Load the Config File and return a Map with the Settings from
 // the Argument given
-std::unordered_map<std::string, std::string> loadConfigfromString(std::string arg);
+KeyValueParser2::KeyValueStore<> loadConfigfromString(std::string arg);
 
 
 // Config for SX Addons and Extensions
@@ -33,12 +37,17 @@ struct SXLibConfig {
 	std::string programName;
 
 	std::string getSetting(const std::string& key,
-		std::unordered_map<std::string, std::string> settings);
+		KeyValueParser2::KeyValueStore<> settings);
 
 	SXLibConfig(const std::string& name) : programName(name) {}
 };
 
 
 // Function to check a Boolean Entry from the Config
-bool checkBoolEntry(const std::unordered_map<std::string, std::string>& result,
+bool checkBoolEntry(const KeyValueParser2::KeyValueStore<>& result,
+	const std::string& name);
+
+// Function to check an Integer Entry from the Config
+// Default return is Zero when a problems occures
+int checkIntEntry(const KeyValueParser2::KeyValueStore<>& result,
 	const std::string& name);

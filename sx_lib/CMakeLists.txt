@@ -1,3 +1,10 @@
+# SX_LIB
+#
+# Standard Libary for SX by Shadowdara
+#
+# licensed under MIT 2026 by Shadowdara
+#
+
 cmake_minimum_required(VERSION 3.13)
 project(sx_lib)
 

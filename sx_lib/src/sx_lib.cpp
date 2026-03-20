@@ -1,8 +1,11 @@
 #include <sx_lib/sx_lib.hpp>
 
 
+using namespace KeyValueParser2;
+
+
 // Load the Config File and return a Map with the Settings
-std::unordered_map<std::string, std::string> loadConfig()
+KeyValueStore<> loadConfig()
 {
 	// Get Home Directory
 	auto homeDir = getHomeDirectory();
@@ -24,46 +27,77 @@ std::unordered_map<std::string, std::string> loadConfig()
 }
 
 
-// Load the Config File and return a Map with the Settings from
-// the Argument given
-std::unordered_map<std::string, std::string> loadConfigfromString(std::string arg)
+// Function to load the LocalConfig
+KeyValueStore<> loadLocalConfig()
 {
-	auto result = KeyValueParser::parse_kvp2(arg);
+	// Get Home Directory
+	std::string homeDir = std::filesystem::current_path().string();
+
+	// Load KVP File
+	std::ifstream file{ homeDir + "/sx.conf" };
+	if (!file) {
+		std::cerr << RED "Could not open Config File" END << std::endl;
+		return {};
+	}
+
+	std::string content(
+		(std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>()
+	);
+
+	auto result = parse_kvp2(content);
 
 	return result;
 }
 
 
+// Load the Config File and return a Map with the Settings from
+// the Argument given
+KeyValueStore<> loadConfigfromString(std::string arg)
+{
+	auto store = parse_kvp2(arg);
+
+	return store;
+}
+
+
 // Load the Config and return the value for the given key
 std::string SXLibConfig::getSetting(const std::string& key,
-	std::unordered_map<std::string, std::string> settings)
+	KeyValueStore<> settings)
 {
-	auto it = settings.find("--" + programName + "-" + key);
-	if (it != settings.end())
+	if (auto val = settings.get("--" + programName + "-" + key))
 	{
-		return it->second;
+		return val.value_or("");
 	}
-	return "";
 }
 
 
 // Function to check a Boolean Entry from the Config
-bool checkBoolEntry(const std::unordered_map<std::string, std::string>& result,
+bool checkBoolEntry(const KeyValueStore<>& result,
 	const std::string& name)
 {
 	// Check for Standard print overwriting
-	auto it = result.find(name);
-	if (it == result.end())
+	if (auto val = result.get(name))
 	{
-		return false;
-	}
-
-	// Set in the Config to true
-	std::string OverrwriteStartMessage = it->second;
-	if (OverrwriteStartMessage == "true")
-	{
-		return true;
-	}
+		if (*val == "true")
+		{
+			return true;
+		}
+	}	
 
 	return false;
+}
+
+
+// Function to check an Integer Entry from the Config
+// Default return is Zero when a problems occures
+int checkIntEntry(const KeyValueStore<>& result,
+	const std::string& name)
+{
+	// Check for Standard print overwriting
+	if (auto val = result.get(name))
+	{
+		int num = std::atoi(result.get(name).value_or("0").c_str());
+	}
+
+	return 0;
 }

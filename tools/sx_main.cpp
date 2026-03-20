@@ -55,9 +55,8 @@ int main(int argc, char *argv[])
 	if (std::string(argv[1]) == "--view" || std::string(argv[1]) == "-vi")
 	{
 		// Iterieren und ausgeben
-		for (const auto &pair : result)
-		{
-			std::cout << pair.first << " => " << pair.second << '\n';
+		for (const auto& [key, value] : result.get_data()) {
+			std::cout << key << " => " << value << '\n';
 		}
 
 		return 0;

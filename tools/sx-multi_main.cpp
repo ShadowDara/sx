@@ -6,7 +6,7 @@
 
 #include "../sx-multi/sx-multi_config.hpp"
 #include "../sx-multi/sx-multi.hpp"
-#include "../sx_lib/sx_lib.hpp"
+#include <sx_lib/sx_lib.hpp>
 
 
 namespace fs = std::filesystem;

@@ -5,7 +5,7 @@
 #include <chrono>
 #include <filesystem>
 
-#include "../sx_lib/sx_lib.hpp"
+#include <sx_lib/sx_lib.hpp>
 #include "sx-multi_config.hpp"
 
 
