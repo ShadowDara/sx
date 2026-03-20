@@ -18,9 +18,6 @@ int main(int argc, char* argv[])
 	// Config
 	auto config = loadConfig();
 
-	// Number Guess Config
-	auto numberguessConfig = SXLibConfig("numberguess");
-	
 	// Check if Argumentsare here
 	if (argc < 2)
 	{
@@ -37,6 +34,9 @@ int main(int argc, char* argv[])
 	// Check if the numberguess game should be started
 	if (std::string(argv[1]) == "--numberguess" || std::string(argv[1]) == "-n")
 	{
+		// Number Guess Config
+		auto numberguessConfig = SXLibConfig("numberguess");
+
 		//std::cout << numberguessConfig.getSetting("lol", config);
 		
 		std::string minS = numberguessConfig.getSetting("min", config);

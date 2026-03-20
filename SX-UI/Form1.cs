@@ -16,6 +16,9 @@ namespace SX_UI
 {
     public partial class Form1 : Form
     {
+        // For Terminal for the Buttons
+        private Dictionary<Button, bool> buttonWindowFlags = new Dictionary<Button, bool>();
+
         // Function to run a command and return its output
         private static async Task<string> RunCommandAsync(string command, string[] args)
         {
@@ -90,198 +93,140 @@ namespace SX_UI
                 if (!string.IsNullOrWhiteSpace(name))
                     button.Text = name;
             }
+
+            // Check if Terminal and Shell or not for the processes
+            var termwindows = new (Button button, string arg)[]
+            {
+                (button1, "--windows-sx-ui-button1-window"),
+                (button2, "--windows-sx-ui-button2-window"),
+                (button3, "--windows-sx-ui-button3-window"),
+                (button4, "--windows-sx-ui-button4-window"),
+                (button5, "--windows-sx-ui-button5-window"),
+                (button6, "--windows-sx-ui-button6-window"),
+                (button7, "--windows-sx-ui-button7-window"),
+                (button8, "--windows-sx-ui-button8-window"),
+                (button9, "--windows-sx-ui-button9-window"),
+                (button10, "--windows-sx-ui-button10-window"),
+                (button11, "--windows-sx-ui-button11-window"),
+                (button12, "--windows-sx-ui-button12-window"),
+                (button13, "--windows-sx-ui-button13-window"),
+                (button14, "--windows-sx-ui-button14-window"),
+                (button15, "--windows-sx-ui-button15-window"),
+                (button16, "--windows-sx-ui-button16-window"),
+            };
+
+            // Options for Command Running Laden
+            foreach (var (button, arg) in termwindows)
+            {
+                string result = await RunCommandAsync("sx", new string[] { arg });
+
+                // Standard = true
+                bool useWindow = true;
+
+                if (!string.IsNullOrWhiteSpace(result))
+                {
+                    // Erwartet "true" oder "false"
+                    bool.TryParse(result.Trim(), out useWindow);
+                }
+
+                buttonWindowFlags[button] = useWindow;
+            }
+        }
+
+        private void HandleButtonClick(Button button, string argument)
+        {
+            bool useWindow = buttonWindowFlags.ContainsKey(button) && buttonWindowFlags[button];
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = "sx",
+                Arguments = argument,
+                UseShellExecute = useWindow,
+                CreateNoWindow = !useWindow,
+                WindowStyle = useWindow ? ProcessWindowStyle.Normal : ProcessWindowStyle.Hidden
+            };
+
+            Process.Start(psi);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sx",
-                Arguments = "--windows-sx-ui-button1",
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
+            HandleButtonClick(button1, "--windows-sx-ui-button1");
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sx",
-                Arguments = "--windows-sx-ui-button2",
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
+            HandleButtonClick(button1, "--windows-sx-ui-button2");
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sx",
-                Arguments = "--windows-sx-ui-button3",
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
+            HandleButtonClick(button1, "--windows-sx-ui-button3");
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sx",
-                Arguments = "--windows-sx-ui-button4",
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
+            HandleButtonClick(button1, "--windows-sx-ui-button4");
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sx",
-                Arguments = "--windows-sx-ui-button5",
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
+            HandleButtonClick(button1, "--windows-sx-ui-button5");
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sx",
-                Arguments = "--windows-sx-ui-button6",
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
+            HandleButtonClick(button1, "--windows-sx-ui-button6");
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sx",
-                Arguments = "--windows-sx-ui-button7",
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
+            HandleButtonClick(button1, "--windows-sx-ui-button7");
         }
 
         private void button8_Click(object sender, EventArgs e)
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sx",
-                Arguments = "--windows-sx-ui-button8",
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
+            HandleButtonClick(button1, "--windows-sx-ui-button8");
         }
 
         private void button9_Click(object sender, EventArgs e)
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sx",
-                Arguments = "--windows-sx-ui-button9",
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
+            HandleButtonClick(button1, "--windows-sx-ui-button9");
         }
 
         private void button10_Click(object sender, EventArgs e)
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sx",
-                Arguments = "--windows-sx-ui-button10",
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
+            HandleButtonClick(button1, "--windows-sx-ui-button10");
         }
 
         private void button11_Click(object sender, EventArgs e)
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sx",
-                Arguments = "--windows-sx-ui-button11",
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
+            HandleButtonClick(button1, "--windows-sx-ui-button11");
         }
 
         private void button12_Click(object sender, EventArgs e)
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sx",
-                Arguments = "--windows-sx-ui-button12",
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
+            HandleButtonClick(button1, "--windows-sx-ui-button12");
         }
 
         private void button13_Click(object sender, EventArgs e)
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sx",
-                Arguments = "--windows-sx-ui-button13",
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
+            HandleButtonClick(button1, "--windows-sx-ui-button13");
         }
 
         private void button14_Click(object sender, EventArgs e)
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sx",
-                Arguments = "--windows-sx-ui-button14",
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
+            HandleButtonClick(button1, "--windows-sx-ui-button14");
         }
 
         private void button15_Click(object sender, EventArgs e)
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sx",
-                Arguments = "--windows-sx-ui-button15",
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
+            HandleButtonClick(button1, "--windows-sx-ui-button15");
         }
 
         private void button16_Click(object sender, EventArgs e)
         {
-            var psi = new ProcessStartInfo
-            {
-                FileName = "sx",
-                Arguments = "--windows-sx-ui-button16",
-                UseShellExecute = true
-            };
-
-            Process.Start(psi);
+            HandleButtonClick(button1, "--windows-sx-ui-button16");
         }
     }
 }
