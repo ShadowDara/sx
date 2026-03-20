@@ -8,3 +8,6 @@ target_sources(sx_lib PRIVATE
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/sx_lib_oscore.cpp"
 )
 set_property(TARGET sx_lib PROPERTY CXX_STANDARD 20)
+
+# Linken gegen kvp_lib
+target_link_libraries(sx_lib PUBLIC kvp)

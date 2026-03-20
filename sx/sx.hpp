@@ -8,9 +8,9 @@
 #include <iostream>
 
 #include "sx_config.hpp"
-#include "../sx_lib/sx_lib_oscore.hpp"
 
-#include "../sx_lib/ansicolors.hpp"
+#include <sx_lib/sx_lib_oscore.hpp>
+#include <sx_lib/ansicolors.hpp>
 
 
 // Function to print the help message

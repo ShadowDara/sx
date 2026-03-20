@@ -10,8 +10,9 @@
 
 #include <kvp/kvp.hpp>
 
-#include "ansicolors.hpp"
-#include "sx_lib_oscore.hpp"
+#include <sx_lib/sx_lib_oscore.hpp>
+
+#include <sx_lib/ansicolors.hpp>
 
 #include <string>
 #include <vector>

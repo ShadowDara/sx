@@ -1,4 +1,4 @@
-#include "sx_lib.hpp"
+#include <sx_lib/sx_lib.hpp>
 
 
 // Load the Config File and return a Map with the Settings
