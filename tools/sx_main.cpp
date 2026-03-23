@@ -23,6 +23,25 @@ int main(int argc, char *argv[])
 	// Create a new Config
 	Config config;
 
+	// Print Info
+	if (std::string(argv[1]) == "--info" || std::string(argv[1]) == "-i")
+	{
+		return printinfo();
+	}
+
+	// Print Version
+	if (std::string(argv[1]) == "--version" || std::string(argv[1]) == "-v")
+	{
+		std::cout << Version "\n";
+		return 0;
+	}
+
+	// Print Help if requested
+	if (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")
+	{
+		return printhelp();
+	}
+
 	// Load the Shortcuts
 	auto result = loadConfig();
 
@@ -60,12 +79,6 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	// Print Help if requested
-	if (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")
-	{
-		return printhelp();
-	}
-
 	// Print View
 	// Iterate over the result and print the key-value pairs
 	if (std::string(argv[1]) == "--view" || std::string(argv[1]) == "-vi")
@@ -75,19 +88,6 @@ int main(int argc, char *argv[])
 			std::cout << key << " => " << value << '\n';
 		}
 
-		return 0;
-	}
-
-	// Print Info
-	if (std::string(argv[1]) == "--info" || std::string(argv[1]) == "-i")
-	{
-		return printinfo();
-	}
-
-	// Print Version
-	if (std::string(argv[1]) == "--version" || std::string(argv[1]) == "-v")
-	{
-		std::cout << Version "\n";
 		return 0;
 	}
 

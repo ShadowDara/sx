@@ -15,6 +15,12 @@ namespace fs = std::filesystem;
 // Main function for the Multi Tool
 int main(int argc, char* argv[])
 {
+	// Print Help if requested
+	if (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")
+	{
+		return printhelp_multi();
+	}
+	
 	// Config
 	auto config = loadConfig();
 
@@ -23,12 +29,6 @@ int main(int argc, char* argv[])
 	{
 		std::cout << RED "Please run with at least one argument or --help or -h." END "\n";
 		return 1;
-	}
-
-	// Print Help if requested
-	if (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")
-	{
-		return printhelp_multi();
 	}
 
 	// Check if the numberguess game should be started
