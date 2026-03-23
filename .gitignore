@@ -14,3 +14,4 @@ SX-UI/.vs/SX-UI.slnx
 *.TMP
 build
 rbuild
+build-ui
