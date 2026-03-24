@@ -23,23 +23,26 @@ int main(int argc, char *argv[])
 	// Create a new Config
 	Config config;
 
-	// Print Info
-	if (std::string(argv[1]) == "--info" || std::string(argv[1]) == "-i")
+	if (argc >= 2)
 	{
-		return printinfo();
-	}
+		// Print Info
+		if (std::string(argv[1]) == "--info" || std::string(argv[1]) == "-i")
+		{
+			return printinfo();
+		}
 
-	// Print Version
-	if (std::string(argv[1]) == "--version" || std::string(argv[1]) == "-v")
-	{
-		std::cout << Version "\n";
-		return 0;
-	}
+		// Print Version
+		if (std::string(argv[1]) == "--version" || std::string(argv[1]) == "-v")
+		{
+			std::cout << Version "\n";
+			return 0;
+		}
 
-	// Print Help if requested
-	if (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")
-	{
-		return printhelp();
+		// Print Help if requested
+		if (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")
+		{
+			return printhelp();
+		}
 	}
 
 	// Load the Shortcuts
