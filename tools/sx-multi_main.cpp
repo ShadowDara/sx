@@ -15,10 +15,13 @@ namespace fs = std::filesystem;
 // Main function for the Multi Tool
 int main(int argc, char* argv[])
 {
-	// Print Help if requested
-	if (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")
+	if (argc >= 2)
 	{
-		return printhelp_multi();
+		// Print Help if requested
+		if (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")
+		{
+			return printhelp_multi();
+		}
 	}
 	
 	// Config
@@ -177,6 +180,16 @@ int main(int argc, char* argv[])
 			}
 		}
 	}
+
+	// stats DB
+	/*
+	if (std::string(argv[1] == "stats"))
+	{
+		// Load DB
+		// add value
+		// Save DB
+	}
+	*/
 
 	return 1;
 }

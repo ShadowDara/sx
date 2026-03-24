@@ -22,6 +22,7 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
 
 # Add the KVP Lib
 add_subdirectory(kvp)
+add_subdirectory(kvpdb)
 add_subdirectory(sx_lib)
 
 
@@ -37,7 +38,7 @@ add_executable (sx
 )
 
 # Link the Libarys to the Target
-target_link_libraries(sx kvp sx_lib)
+target_link_libraries(sx kvp sx_lib kvpdb)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET sx PROPERTY CXX_STANDARD 20)
@@ -55,7 +56,7 @@ add_executable(sx-multi
 )
 
 # Link the Libarys to the Target
-target_link_libraries(sx-multi kvp sx_lib)
+target_link_libraries(sx-multi kvp sx_lib kvpdb)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET sx-multi PROPERTY CXX_STANDARD 20)
@@ -73,7 +74,7 @@ add_executable(test
 )
 
 # Link the Libarys to the Target
-target_link_libraries(test kvp sx_lib)
+target_link_libraries(test kvp sx_lib kvpdb)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET test PROPERTY CXX_STANDARD 20)
