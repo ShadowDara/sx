@@ -83,11 +83,14 @@ int runShortcut(int argc, char* argv[],
 		command += argv[i];
 	}
 
+	std::string linshell = result.get("--windows-default-shell").value_or("");
+	std::string winshell = result.get("--linux-default-shell").value_or("");
+
 	// Execute
 	auto returncode = runCommand(
 		command,
-		result.get("--windows-default-shell").value_or(""),
-		result.get("--linux-default-shell").value_or("")
+		linshell,
+		winshell
 	);
 
 	//printf("Command returned with code %d\n", returncode);

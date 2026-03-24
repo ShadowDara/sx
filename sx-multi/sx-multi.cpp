@@ -18,6 +18,7 @@ int printhelp_multi()
 		<< " --file, f: create a file\n"
 		<< " viewempty: view every empty folder from a startpath\n"
 		<< " rmempty: remove empty Folders\n"
+		<< " viewstats: view the stats for commands from SX\n"
 		<< "\n"
 		<< "Usage:\n"
 		<< " - Run the program and follow the instructions for the selected tool or game.\n"
@@ -167,3 +168,65 @@ void remove_empty_dirs(const fs::path& dir, bool dry_run) {
 		}
 	}
 }
+
+/*
+// Stats
+void addstats(const std::string& stats) {
+    std::string filename = "stats.bin";
+    std::string lockfile = filename + ".lock";
+
+    // Lock holen
+    if (!KeyValueDBSInt::acquire_lock(lockfile, 5000)) { // z.B. 5 Sekunden Timeout
+        std::cerr << "Datei wird gerade von einem anderen Prozess benutzt.\n";
+        return;
+    }
+
+    try {
+        // Map einlesen
+        auto data = KeyValueDBSInt::read_map(filename);
+
+        // Key erhöhen oder neu anlegen
+        if (data.find(stats) != data.end()) {
+            data[stats] += 1;
+        } else {
+            data[stats] = 1;
+        }
+
+        // Map wieder schreiben
+        KeyValueDBSInt::write_map(data, filename);
+
+    } catch (const std::exception& e) {
+        KeyValueDBSInt::release_lock(lockfile);
+        throw; // Fehler weitergeben
+    }
+
+    // Lock freigeben
+    KeyValueDBSInt::release_lock(lockfile);
+}
+
+// View Stats
+void viewstats()
+{
+    std::string filename = "stats.bin";
+
+    try {
+        // Map einlesen
+        auto data = KeyValueDBSInt::read_map(filename);
+
+        if (data.empty()) {
+            std::cout << "Keine Stats vorhanden.\n";
+            return;
+        }
+
+        // Stats ausgeben
+        std::cout << "=== Stats ===\n";
+        for (const auto& [key, value] : data) {
+            std::cout << key << " : " << value << "\n";
+        }
+        std::cout << "=============\n";
+
+    } catch (const std::exception& e) {
+        std::cerr << "Fehler beim Einlesen der Stats: " << e.what() << "\n";
+    }
+}
+*/

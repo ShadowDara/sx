@@ -27,7 +27,7 @@ KVPMAP loadConfig()
 		(std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>()
 	);
 
-	auto result = KeyValueParser::parse_kvp2(content);
+	auto result = parse_kvp2(content);
 
 	return result;
 }

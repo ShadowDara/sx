@@ -183,11 +183,23 @@ int main(int argc, char* argv[])
 
 	// stats DB
 	/*
-	if (std::string(argv[1] == "stats"))
+	if (std::string(argv[1]) == "stats")
 	{
 		// Load DB
 		// add value
 		// Save DB
+		if (argc <= 2)
+		{
+			return 1;
+		}
+
+		addstats(argv[2]);
+	}
+
+	// View the Stats from SX
+	if (std::string(argv[1]) == "viewstats")
+	{
+		viewstats();
 	}
 	*/
 
