@@ -38,7 +38,7 @@ add_executable (sx
 )
 
 # Link the Libarys to the Target
-target_link_libraries(sx kvp sx_lib kvpdb)
+target_link_libraries(sx kvp sx_lib)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET sx PROPERTY CXX_STANDARD 20)

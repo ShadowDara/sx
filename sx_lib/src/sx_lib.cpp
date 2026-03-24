@@ -43,7 +43,7 @@ KVPMAP loadLocalConfig()
 	// Load KVP File
 	std::ifstream file{ currenrDir + "/localsx.conf" };
 	if (!file) {
-		std::cerr << RED "Could not open Config File" END << std::endl;
+		//std::cerr << RED "Could not open Config File" END << std::endl;
 		return {};
 	}
 
