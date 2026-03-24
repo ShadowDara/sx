@@ -30,5 +30,5 @@ clean:
 .PHONY: dbuild build run install clean buildui
 
 buildui:
-	cd SX-UI-Linux && cmake -S . -B build-ui -DCMAKE_BUILD_TYPE=Release -DSX_BUILD_UI=ON && cmake --build build-ui
+	cd SX-UI-Linux && cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DSX_BUILD_UI=ON && cmake --build build
 	
