@@ -162,6 +162,26 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	// Create a File
+	if (std::string(argv[1]) == "c")
+	{
+		if (argc > 2)
+		{
+			std::string filename = argv[2];
+			std::ofstream file{ filename };
+			if (!file) {
+				perror("Could not create file\n");
+				return 1;
+			}
+			std::cout << "File created: " << filename << std::endl;
+			return 0;
+		}
+		else
+		{
+			std::cerr << "Please provide a filename.\n";
+		}
+	}
+
 	// TODO
 	// find greatest folders
 	if (std::string(argv[1]) == "findgreatest")

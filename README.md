@@ -74,6 +74,12 @@ Here are some Example Configs for SX
 - [Full Config](/example_sx.conf)
 
 
+## Local Config
+
+There can although be a `localsx.conf` which will be loaded when it is
+enabled in the global config.
+
+
 ## Info
 
 SX uses [KVP](https://github.com/ShadowDara/KeyValueParser)

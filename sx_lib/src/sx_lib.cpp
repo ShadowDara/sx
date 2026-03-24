@@ -37,10 +37,11 @@ KVPMAP loadConfig()
 KVPMAP loadLocalConfig()
 {
 	// Get Home Directory
-	std::string homeDir = std::filesystem::current_path().string();
+	std::string currenrDir = std::filesystem::current_path().string();
+	//std::cout << "Current Directory: " << currenrDir << std::endl;
 
 	// Load KVP File
-	std::ifstream file{ homeDir + "/sx.conf" };
+	std::ifstream file{ currenrDir + "/localsx.conf" };
 	if (!file) {
 		std::cerr << RED "Could not open Config File" END << std::endl;
 		return {};
@@ -84,14 +85,10 @@ bool checkBoolEntry(const KVPMAP& result,
 {
 	// Check for Standard print overwriting
 	if (auto val = result.get(name))
-	{
-		if (*val == "true")
-		{
-			return true;
-		}
-	}	
-
-	return false;
+    {
+        return val.value() == "true";
+    }
+    return false;
 }
 
 

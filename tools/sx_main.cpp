@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
 		else
 		{
 			merge_maps(localConfig, result);
+			result = localConfig;
 		}
 	}
 
