@@ -204,6 +204,8 @@ int main(int argc, char *argv[])
         JSRuntime *rt = JS_NewRuntime();
         JSContext *ctx = JS_NewContext(rt);
 
+        init_fltk_classes(rt);
+
         install_console(ctx);
 
         // 👇 DER WICHTIGE TEIL: Loader aktivieren

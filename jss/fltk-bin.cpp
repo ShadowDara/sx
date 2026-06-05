@@ -1,7 +1,56 @@
 #include "fltk-bin.hpp"
 
-static JSClassID js_fl_window_class_id;
-static JSClassID js_fl_button_class_id;
+static JSValue button_proto;
+
+static void js_fl_window_finalizer(JSRuntime* rt, JSValue val)
+{
+    JSFlWindow* obj =
+        (JSFlWindow*)JS_GetOpaque(val, js_fl_window_class_id);
+
+    if (obj)
+    {
+        delete obj->win;
+        js_free_rt(rt, obj);
+    }
+}
+
+static void js_fl_button_finalizer(JSRuntime* rt, JSValue val)
+{
+    JSFlButton* obj =
+        (JSFlButton*)JS_GetOpaque(val, js_fl_button_class_id);
+
+    if (!obj)
+        return;
+
+    if (obj->btn)
+    {
+        obj->btn->callback(nullptr, nullptr);
+    }
+
+    if (!JS_IsUndefined(obj->callback))
+    {
+        JS_FreeValueRT(rt, obj->callback);
+        obj->callback = JS_UNDEFINED;
+    }
+
+    delete obj->btn;
+    obj->btn = nullptr;
+
+    js_free_rt(rt, obj);
+}
+
+JSClassID js_fl_window_class_id;
+JSClassID js_fl_button_class_id;
+
+JSClassDef js_fl_window_class = {
+    "FlWindow",
+    js_fl_window_finalizer
+};
+
+JSClassDef js_fl_button_class = {
+    "FlButton",
+    js_fl_button_finalizer
+};
 
 static JSValue js_fl_window(JSContext* ctx, JSValueConst this_val,
                             int argc, JSValueConst* argv)
@@ -44,11 +93,12 @@ static JSValue js_fl_button(JSContext* ctx, JSValueConst this_val,
 
     obj->btn = new Fl_Button(x, y, w, h, label ? label : "");
     obj->ctx = ctx;
+    obj->rt = JS_GetRuntime(ctx);
     obj->callback = JS_UNDEFINED;
 
     if (label) JS_FreeCString(ctx, label);
 
-    JSValue jsobj = JS_NewObjectClass(ctx, js_fl_window_class_id);
+    JSValue jsobj = JS_NewObjectClass(ctx, js_fl_button_class_id);
 
     JS_SetOpaque(jsobj, obj);
 
@@ -59,23 +109,33 @@ static void button_cb(Fl_Widget* w, void* data)
 {
     JSFlButton* obj = (JSFlButton*)data;
 
-    if (!JS_IsUndefined(obj->callback))
-    {
-        JSValue ret = JS_Call(
-            obj->ctx,
-            obj->callback,
-            JS_UNDEFINED,
-            0,
-            nullptr);
+    if (!obj || !obj->rt || JS_IsUndefined(obj->callback))
+        return;
 
-        JS_FreeValue(obj->ctx, ret);
-    }
+    JSValue ret = JS_Call(
+        obj->ctx,
+        obj->callback,
+        JS_UNDEFINED,
+        0,
+        nullptr);
+
+    JS_FreeValue(obj->ctx, ret);
 }
 
 static JSValue js_button_onclick(JSContext* ctx, JSValueConst this_val,
                                  int argc, JSValueConst* argv)
 {
-    JSFlButton* obj = (JSFlButton*)JS_GetOpaque(this_val, 0);
+    JSFlButton* obj =
+        (JSFlButton*)JS_GetOpaque(this_val, js_fl_button_class_id);
+
+    if (!obj || argc < 1)
+        return JS_UNDEFINED;
+
+    // free old callback (IMPORTANT FIX)
+    if (!JS_IsUndefined(obj->callback))
+    {
+        JS_FreeValue(ctx, obj->callback);
+    }
 
     obj->callback = JS_DupValue(ctx, argv[0]);
 
@@ -87,7 +147,11 @@ static JSValue js_button_onclick(JSContext* ctx, JSValueConst this_val,
 static JSValue js_window_show(JSContext* ctx, JSValueConst this_val,
                               int argc, JSValueConst* argv)
 {
-    JSFlWindow* obj = (JSFlWindow*)JS_GetOpaque(this_val, 0);
+    std::cout << "SHOW CALLED\n";
+    JSFlWindow* obj =
+    (JSFlWindow*)JS_GetOpaque(
+        this_val,
+        js_fl_window_class_id);
     obj->win->show();
     return JS_UNDEFINED;
 }
@@ -95,25 +159,57 @@ static JSValue js_window_show(JSContext* ctx, JSValueConst this_val,
 static JSValue js_fltk_run(JSContext* ctx, JSValueConst this_val,
                            int argc, JSValueConst* argv)
 {
+    std::cout << "RUN CALLED\n";
     Fl::run();
     return JS_UNDEFINED;
 }
 
 static int js_fltk_init(JSContext* ctx, JSModuleDef* m)
 {
-    JS_SetModuleExport(ctx, m, "Window",
-        JS_NewCFunction(ctx, js_fl_window, "Window", 3));
+    // =========================
+    // WINDOW
+    // =========================
+    JSValue window_proto = JS_NewObject(ctx);
 
-    JS_SetModuleExport(ctx, m, "Button",
-        JS_NewCFunction(ctx, js_fl_button, "Button", 5));
+    JS_SetPropertyStr(
+        ctx,
+        window_proto,
+        "show",
+        JS_NewCFunction(ctx, js_window_show, "show", 0));
 
+    JSValue window_ctor = JS_NewCFunction(ctx, js_fl_window, "Window", 3);
+
+    JS_SetConstructor(ctx, window_ctor, window_proto);
+
+    JS_SetModuleExport(ctx, m, "Window", window_ctor);
+
+    // =========================
+    // BUTTON
+    // =========================
+    JSValue button_proto = JS_NewObject(ctx);
+
+    JS_SetPropertyStr(
+        ctx,
+        button_proto,
+        "onClick",
+        JS_NewCFunction(ctx, js_button_onclick, "onClick", 1));
+
+    JSValue button_ctor = JS_NewCFunction(ctx, js_fl_button, "Button", 5);
+
+    JS_SetConstructor(ctx, button_ctor, button_proto);
+
+    JS_SetModuleExport(ctx, m, "Button", button_ctor);
+
+    // =========================
+    // RUN
+    // =========================
     JS_SetModuleExport(ctx, m, "run",
         JS_NewCFunction(ctx, js_fltk_run, "run", 0));
 
     return 0;
 }
 
-static JSModuleDef* create_fltk_module(JSContext* ctx)
+JSModuleDef* create_fltk_module(JSContext* ctx)
 {
     JSModuleDef* m = JS_NewCModule(ctx, "jss.fltk", js_fltk_init);
 
@@ -122,4 +218,18 @@ static JSModuleDef* create_fltk_module(JSContext* ctx)
     JS_AddModuleExport(ctx, m, "run");
 
     return m;
+}
+
+void init_fltk_classes(JSRuntime* rt)
+{
+    JS_NewClassID(&js_fl_window_class_id);
+    JS_NewClassID(&js_fl_button_class_id);
+
+    JS_NewClass(rt,
+                js_fl_window_class_id,
+                &js_fl_window_class);
+
+    JS_NewClass(rt,
+                js_fl_button_class_id,
+                &js_fl_button_class);
 }
