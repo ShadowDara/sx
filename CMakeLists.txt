@@ -30,7 +30,7 @@ add_subdirectory(kvpdb)
 add_subdirectory(sx_lib)
 add_subdirectory(sfplib)
 
-add_subdirectory("thirdparty/fltk")
+add_subdirectory("thirdparty/fltk-new")
 add_subdirectory("thirdparty/quickjspp-master")
 
 
