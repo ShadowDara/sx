@@ -30,7 +30,7 @@ add_subdirectory(kvpdb)
 add_subdirectory(sx_lib)
 add_subdirectory(sfplib)
 
-#add_subdirectory("thirdparty/fltk-master")
+add_subdirectory("thirdparty/fltk")
 add_subdirectory("thirdparty/quickjspp-master")
 
 
@@ -102,7 +102,9 @@ endif()
 
 # jss
 
-add_executable(jss "tools/jss.cpp")
+add_executable(jss
+	"jss/main.cpp"
+)
 
 # Link the Libarys to the Target
 target_link_libraries(jss kvp sx_lib kvpdb sfplib quickjspp)

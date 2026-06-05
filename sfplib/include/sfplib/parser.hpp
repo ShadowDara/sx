@@ -9,6 +9,8 @@
 #include <sstream>
 #include <cstdlib>
 #include <fstream>
+#include <optional>
+#include <algorithm>
 
 // Commands
 enum class CommandType {
