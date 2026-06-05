@@ -3,10 +3,12 @@
 #include <iostream>
 #include <charconv>
 #include <filesystem>
+#include <fstream>
 
 #include "../sx-multi/sx-multi_config.hpp"
 #include "../sx-multi/sx-multi.hpp"
 #include <sx_lib/sx_lib.hpp>
+#include <sx_lib/sx_lib_oscore.hpp>
 
 
 namespace fs = std::filesystem;
@@ -222,6 +224,16 @@ int main(int argc, char* argv[])
 		viewstats();
 	}
 	*/
+	
+	if (std::string(argv[1]) == "newconf")
+	{
+		// Create new Config here
+		std::ofstream file(getHomeDirectory() + "/sx.conf");
+
+    //file << "Hallo Datei\n";
+
+    file.close();
+	}
 
 	return 1;
 }

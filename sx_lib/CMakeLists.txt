@@ -9,6 +9,7 @@ cmake_minimum_required(VERSION 3.13)
 project(sx_lib)
 
 add_library(sx_lib)
+
 target_include_directories(sx_lib PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/")
 target_sources(sx_lib PRIVATE
 	"${CMAKE_CURRENT_SOURCE_DIR}/src/sx_lib.cpp"

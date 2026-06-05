@@ -1,6 +1,10 @@
 ﻿# CMakeList.txt: CMake-Projekt für "sx". Schließen Sie die Quelle ein, und definieren Sie
 # projektspezifische Logik hier.
 #
+#
+# bash /storage/emulated/0/cxxyyx/build.sh
+#
+
 cmake_minimum_required (VERSION 3.10)
 
 # Aktivieren Sie Hot Reload für MSVC-Compiler, sofern unterstützt.
@@ -20,14 +24,19 @@ endif()
 # Link Time Optimization (LTO) aktivieren für Release-Builds
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION_RELEASE TRUE)
 
-# Add the KVP Lib
+# Add the Libs
 add_subdirectory(kvp)
 add_subdirectory(kvpdb)
 add_subdirectory(sx_lib)
+add_subdirectory(sfplib)
+
+#add_subdirectory("thirdparty/fltk-master")
+add_subdirectory("thirdparty/quickjspp-master")
 
 
-# Shortcuter Executable
+# Project Name
 project ("sx")
+
 
 # Fügen Sie der ausführbaren Datei dieses Projekts eine Quelle hinzu.
 add_executable (sx
@@ -38,7 +47,7 @@ add_executable (sx
 )
 
 # Link the Libarys to the Target
-target_link_libraries(sx kvp sx_lib)
+target_link_libraries(sx sx_lib)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET sx PROPERTY CXX_STANDARD 20)
@@ -46,7 +55,6 @@ endif()
 
 
 # MultiTool Executable
-project("sx-multi")
 
 add_executable(sx-multi
 	"tools/sx-multi_main.cpp"
@@ -56,7 +64,7 @@ add_executable(sx-multi
 )
 
 # Link the Libarys to the Target
-target_link_libraries(sx-multi kvp sx_lib kvpdb)
+target_link_libraries(sx-multi sx_lib kvpdb)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET sx-multi PROPERTY CXX_STANDARD 20)
@@ -64,7 +72,6 @@ endif()
 
 
 # Test Project
-project("test")
 
 add_executable(test
 	"tools/test.cpp"
@@ -78,4 +85,28 @@ target_link_libraries(test kvp sx_lib kvpdb)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET test PROPERTY CXX_STANDARD 20)
+endif()
+
+
+# samfileparser
+
+add_executable(sfp "tools/sfp.cpp")
+
+# Link the Libarys to the Target
+target_link_libraries(sfp kvp sx_lib kvpdb sfplib)
+
+if (CMAKE_VERSION VERSION_GREATER 3.12)
+  set_property(TARGET sfp PROPERTY CXX_STANDARD 20)
+endif()
+
+
+# jss
+
+add_executable(jss "tools/jss.cpp")
+
+# Link the Libarys to the Target
+target_link_libraries(jss kvp sx_lib kvpdb sfplib quickjspp)
+
+if (CMAKE_VERSION VERSION_GREATER 3.12)
+  set_property(TARGET jss PROPERTY CXX_STANDARD 20)
 endif()
