@@ -27,8 +27,11 @@ install:
 clean:
 	rm -rf build
 
-.PHONY: dbuild build run install clean buildui
+.PHONY: dbuild build run install clean buildui jss
 
 buildui:
 	cd SX-UI-Linux && cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DSX_BUILD_UI=ON && cmake --build build
-	
+
+jss:
+	$(MAKE) dbuild
+	./build/jss fltk.jss

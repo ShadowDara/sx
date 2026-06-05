@@ -7,6 +7,8 @@
 #include <sstream>
 #include <filesystem>
 
+#include "fltk-bin.hpp"
+
 /// =========================
 /// 1. MODULE: jss
 /// =========================
@@ -153,6 +155,11 @@ static JSModuleDef *module_loader(
     if (strcmp(module_name, "jss") == 0)
     {
         return create_jss_module(ctx);
+    }
+
+    if (strcmp(module_name, "jss.fltk") == 0)
+    {
+        return create_fltk_module(ctx);
     }
 
     // 2. Datei laden

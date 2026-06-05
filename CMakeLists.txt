@@ -104,10 +104,11 @@ endif()
 
 add_executable(jss
 	"jss/main.cpp"
+	"jss/fltk-bin.cpp"
 )
 
 # Link the Libarys to the Target
-target_link_libraries(jss kvp sx_lib kvpdb sfplib quickjspp)
+target_link_libraries(jss kvp sx_lib kvpdb sfplib quickjspp fltk)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET jss PROPERTY CXX_STANDARD 20)
