@@ -34,4 +34,4 @@ buildui:
 
 jss:
 	$(MAKE) dbuild
-	./build/jss fltk.jss
+	./build/jss fltk.js
