@@ -47,6 +47,10 @@
 #include "libunicode.h"
 #include "dtoa.h"
 
+/* Enable detailed leak dumping at runtime teardown to help debug
+ * remaining GC objects. This is temporary for debugging purposes. */
+#define DUMP_LEAKS 1
+
 #define OPTIMIZE         1
 #define SHORT_OPCODES    1
 #if defined(EMSCRIPTEN)

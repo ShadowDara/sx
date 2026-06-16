@@ -1,6 +1,7 @@
 #include "fltk-bin.hpp"
 
-static JSValue button_proto;
+static JSValue window_proto = JS_UNDEFINED;
+static JSValue button_proto = JS_UNDEFINED;
 
 static void js_fl_window_finalizer(JSRuntime* rt, JSValue val)
 {
@@ -35,7 +36,6 @@ static void js_fl_button_finalizer(JSRuntime* rt, JSValue val)
 
     delete obj->btn;
     obj->btn = nullptr;
-
     js_free_rt(rt, obj);
 }
 
@@ -169,7 +169,7 @@ static int js_fltk_init(JSContext* ctx, JSModuleDef* m)
     // =========================
     // WINDOW
     // =========================
-    JSValue window_proto = JS_NewObject(ctx);
+    window_proto = JS_NewObject(ctx);
 
     JS_SetPropertyStr(
         ctx,
@@ -177,16 +177,17 @@ static int js_fltk_init(JSContext* ctx, JSModuleDef* m)
         "show",
         JS_NewCFunction(ctx, js_window_show, "show", 0));
 
-    JSValue window_ctor = JS_NewCFunction(ctx, js_fl_window, "Window", 3);
+    JSValue window_ctor = JS_NewCFunction2(ctx, js_fl_window, "Window", 3, JS_CFUNC_constructor_or_func, 0);
 
     JS_SetConstructor(ctx, window_ctor, window_proto);
+    JS_SetClassProto(ctx, js_fl_window_class_id, window_proto);
 
     JS_SetModuleExport(ctx, m, "Window", window_ctor);
 
     // =========================
     // BUTTON
     // =========================
-    JSValue button_proto = JS_NewObject(ctx);
+    button_proto = JS_NewObject(ctx);
 
     JS_SetPropertyStr(
         ctx,
@@ -194,9 +195,10 @@ static int js_fltk_init(JSContext* ctx, JSModuleDef* m)
         "onClick",
         JS_NewCFunction(ctx, js_button_onclick, "onClick", 1));
 
-    JSValue button_ctor = JS_NewCFunction(ctx, js_fl_button, "Button", 5);
+    JSValue button_ctor = JS_NewCFunction2(ctx, js_fl_button, "Button", 5, JS_CFUNC_constructor_or_func, 0);
 
     JS_SetConstructor(ctx, button_ctor, button_proto);
+    JS_SetClassProto(ctx, js_fl_button_class_id, button_proto);
 
     JS_SetModuleExport(ctx, m, "Button", button_ctor);
 
@@ -233,3 +235,4 @@ void init_fltk_classes(JSRuntime* rt)
                 js_fl_button_class_id,
                 &js_fl_button_class);
 }
+

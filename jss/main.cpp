@@ -242,9 +242,17 @@ int main(int argc, char *argv[])
         JS_FreeValue(ctx, global);
         JS_FreeValue(ctx, result);
 
-        JS_RunGC(rt);
+        // Run the GC multiple times to break cyclic references and
+        // ensure finalizers run. Repeat several times as some objects
+        // can be resurrected during finalization.
+        for (int i = 0; i < 10; ++i)
+            JS_RunGC(rt);
 
         JS_FreeContext(ctx);
+
+        for (int i = 0; i < 10; ++i)
+            JS_RunGC(rt);
+
         JS_FreeRuntime(rt);
 
         return 0;

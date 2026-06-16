@@ -8,6 +8,8 @@
 
 #include <quickjs/quickjs.h>
 
+#include <vector>
+
 extern JSClassID js_fl_window_class_id;
 extern JSClassID js_fl_button_class_id;
 
@@ -47,3 +49,4 @@ static int js_fltk_init(JSContext* ctx, JSModuleDef* m);
 JSModuleDef* create_fltk_module(JSContext* ctx);
 
 void init_fltk_classes(JSRuntime* rt);
+
