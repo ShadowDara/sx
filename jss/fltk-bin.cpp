@@ -163,7 +163,7 @@ static JSValue js_button_onclick(JSContext* ctx, JSValueConst this_val,
 static JSValue js_window_show(JSContext* ctx, JSValueConst this_val,
                               int argc, JSValueConst* argv)
 {
-    std::cout << "SHOW CALLED\n";
+    // std::cout << "SHOW CALLED\n";
     JSFlWindow* obj =
     (JSFlWindow*)JS_GetOpaque(
         this_val,
@@ -172,10 +172,29 @@ static JSValue js_window_show(JSContext* ctx, JSValueConst this_val,
     return JS_UNDEFINED;
 }
 
+static JSValue js_window_add(JSContext* ctx, JSValueConst this_val,
+                             int argc, JSValueConst* argv)
+{
+    JSFlWindow* obj =
+        (JSFlWindow*)JS_GetOpaque(this_val, js_fl_window_class_id);
+    if (!obj)
+        return JS_ThrowTypeError(ctx, "not a Window");
+    if (argc < 1)
+        return JS_ThrowTypeError(ctx, "Window.add requires a Button");
+
+    JSFlButton* btn_obj =
+        (JSFlButton*)JS_GetOpaque2(ctx, argv[0], js_fl_button_class_id);
+    if (!btn_obj || !btn_obj->btn)
+        return JS_ThrowTypeError(ctx, "Window.add requires a Button");
+
+    obj->win->add(btn_obj->btn);
+    return JS_UNDEFINED;
+}
+
 static JSValue js_fltk_run(JSContext* ctx, JSValueConst this_val,
                            int argc, JSValueConst* argv)
 {
-    std::cout << "RUN CALLED\n";
+    // std::cout << "RUN CALLED\n";
     Fl::run();
     return JS_UNDEFINED;
 }
@@ -192,6 +211,12 @@ static int js_fltk_init(JSContext* ctx, JSModuleDef* m)
         window_proto,
         "show",
         JS_NewCFunction(ctx, js_window_show, "show", 0));
+
+    JS_SetPropertyStr(
+        ctx,
+        window_proto,
+        "add",
+        JS_NewCFunction(ctx, js_window_add, "add", 1));
 
     JSValue window_ctor = JS_NewCFunction2(ctx, js_fl_window, "Window", 3, JS_CFUNC_constructor_or_func, 0);
 
