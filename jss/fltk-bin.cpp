@@ -89,6 +89,13 @@ static JSValue js_fl_button(JSContext* ctx, JSValueConst this_val,
 
     label = JS_ToCString(ctx, argv[4]);
 
+    if (argc >= 6 && !JS_IsFunction(ctx, argv[5]))
+    {
+        if (label)
+            JS_FreeCString(ctx, label);
+        return JS_ThrowTypeError(ctx, "Button callback must be a function");
+    }
+
     JSFlButton* obj = (JSFlButton*)js_mallocz(ctx, sizeof(JSFlButton));
 
     obj->btn = new Fl_Button(x, y, w, h, label ? label : "");
@@ -96,7 +103,14 @@ static JSValue js_fl_button(JSContext* ctx, JSValueConst this_val,
     obj->rt = JS_GetRuntime(ctx);
     obj->callback = JS_UNDEFINED;
 
-    if (label) JS_FreeCString(ctx, label);
+    if (argc >= 6 && JS_IsFunction(ctx, argv[5]))
+    {
+        obj->callback = JS_DupValue(ctx, argv[5]);
+        obj->btn->callback(button_cb, obj);
+    }
+
+    if (label)
+        JS_FreeCString(ctx, label);
 
     JSValue jsobj = JS_NewObjectClass(ctx, js_fl_button_class_id);
 
@@ -131,7 +145,9 @@ static JSValue js_button_onclick(JSContext* ctx, JSValueConst this_val,
     if (!obj || argc < 1)
         return JS_UNDEFINED;
 
-    // free old callback (IMPORTANT FIX)
+    if (!JS_IsFunction(ctx, argv[0]))
+        return JS_ThrowTypeError(ctx, "onClick argument must be a function");
+
     if (!JS_IsUndefined(obj->callback))
     {
         JS_FreeValue(ctx, obj->callback);

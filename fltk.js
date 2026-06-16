@@ -6,13 +6,11 @@ let win = Window(400, 300, "JS FLTK");
 
 console.log("After Win");
 
-let btn = Button(100, 100, 200, 50, "Click me");
+let btn = Button(100, 100, 200, 50, "Click me", () => {
+    console.log("Button clicked!");
+});
 
 console.log("After But");
-
-
-console.log("After Onclick");
-
 
 win.show();
 
